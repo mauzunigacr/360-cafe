@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>360 Café</title>
+<link href="https://fonts.googleapis.com/css2?family=Poetsen+One&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ── TOKENS ─────────────────────────────────────────────────────── */
+:root{
+  --red:    #EC4643;
+  --red2:   #d63b38;
+  --dark:   #2A2929;
+  --olive:  #8A9A6C;
+  --beige:  #F5EAD8;
+  --salmon: #EF8B7B;
+  --light:  #f5f5f5;
+  --white:  #ffffff;
+  --nav-h:  72px;
+  --pb-h:   0px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:#fff;color:var(--dark)}
+h1,h2,h3{font-family:'Poetsen One',cursive;font-weight:400}
+p{line-height:1.65;color:#555}
+a{text-decoration:none;color:inherit;cursor:pointer}
+img{display:block;max-width:100%;object-fit:cover}
+button{cursor:pointer;border:none;outline:none;font-family:'Poppins',sans-serif}
+input,textarea,select{font-family:'Poppins',sans-serif;font-size:14px}
+
+/* ── NON-HERO PAGES: push content below fixed nav ─────────────────── */
+#page-product,#page-cart,#page-checkout,#page-confirmation,#page-blog{
+  padding-top:var(--nav-h);
+}
+
+/* ── NAV ─────────────────────────────────────────────────────────── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:var(--nav-h);
+  background:transparent;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+  box-shadow:none;
+  transition:background .35s ease,box-shadow .35s ease;
+}
+#nav.scrolled{
+  background:#fff;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+.nav-logo-img{height:56px;width:56px;border-radius:50%;object-fit:cover;cursor:pointer}
+.nav-lang{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:rgba(255,255,255,.9);cursor:pointer;transition:color .35s}
+.nav-lang img{width:18px;height:13px;border-radius:2px}
+#nav.scrolled .nav-lang{color:#555}
+.nav-links{display:flex;gap:4px}
+.nav-links a{
+  font-size:13.5px;font-weight:600;color:rgba(255,255,255,.9);
+  padding:6px 12px;border-radius:4px;transition:color .35s;position:relative;
+}
+#nav.scrolled .nav-links a{color:var(--dark)}
+.nav-links a:hover{color:var(--red) !important}
+.nav-links a.active{color:#fff}
+#nav.scrolled .nav-links a.active{color:var(--red)}
+.nav-links a.active::after{
+  content:'';position:absolute;bottom:-2px;left:12px;right:12px;
+  height:2px;background:#fff;border-radius:2px;
+}
+#nav.scrolled .nav-links a.active::after{background:var(--red)}
+.nav-user{font-size:18px;color:rgba(255,255,255,.9);cursor:pointer;transition:color .35s}
+#nav.scrolled .nav-user{color:#555}
+.nav-user:hover{color:var(--red)}
+
+/* ── PAGES ───────────────────────────────────────────────────────── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── BUTTONS ─────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 28px;border-radius:999px;font-size:14px;font-weight:700;transition:all .2s;cursor:pointer;border:none}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--red2)}
+.btn-outline-white{background:transparent;color:#fff;border:2px solid #fff}
+.btn-outline-white:hover{background:rgba(255,255,255,.15)}
+.btn-outline-red{background:transparent;color:var(--red);border:2px solid var(--red)}
+.btn-outline-red:hover{background:var(--red);color:#fff}
+.btn-green{background:#3d9e5f;color:#fff}
+.btn-green:hover{background:#2f7d4a}
+.btn-sm{padding:7px 18px;font-size:13px}
+
+/* ── SECTION HELPERS ─────────────────────────────────────────────── */
+.sec{padding:64px 32px}
+.wrap{max-width:1140px;margin:0 auto}
+.sec-title{font-size:36px;font-weight:800;text-align:center;margin-bottom:10px}
+.sec-title.red{color:var(--red);font-style:italic}
+.sec-sub{text-align:center;color:#999;font-size:14px;margin-bottom:36px}
+.sec-cta{text-align:center;margin-top:36px}
+
+/* ── HERO ────────────────────────────────────────────────────────── */
+.hero{
+  position:relative;height:88vh;min-height:500px;
+  background-size:cover;background-position:center;
+  display:flex;align-items:center;
+}
+.hero-overlay{position:absolute;inset:0;background:rgba(30,10,10,.45)}
+.hero-content{position:relative;z-index:1;padding:0 64px;max-width:700px}
+.hero-title{font-size:52px;color:#fff;line-height:1.1;margin-bottom:18px}
+.hero-sub{font-size:14.5px;color:rgba(255,255,255,.85);line-height:1.7;margin-bottom:28px}
+
+/* ── PAGE HERO (interior pages) ──────────────────────────────────── */
+.page-hero{
+  height:340px;background-size:cover;background-position:center;
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.page-hero::before{content:'';position:absolute;inset:0;background:rgba(20,10,10,.38)}
+.page-hero h1{
+  position:relative;z-index:1;color:#fff;font-size:56px;text-align:center;
+}
+
+/* ── CATEGORY CARDS (Home) ───────────────────────────────────────── */
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
+.menu-card{cursor:pointer;text-align:center}
+.menu-card-img-wrap{border-radius:12px;overflow:hidden;height:160px;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+.menu-card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.menu-card:hover .menu-card-img-wrap img{transform:scale(1.06)}
+.menu-card-label{font-size:14px;font-weight:600;color:var(--dark)}
+
+/* ── RESERVATION STRIP ───────────────────────────────────────────── */
+.res-strip{
+  min-height:320px;background-size:cover;background-position:center;
+  display:flex;align-items:center;position:relative;
+}
+.res-strip::before{content:'';position:absolute;inset:0;background:rgba(30,20,20,.55)}
+.res-strip-content{position:relative;z-index:1;padding:56px 64px;max-width:680px}
+.res-strip-content h2{font-size:44px;color:#fff;margin-bottom:16px;font-family:'Poetsen One',cursive}
+.res-strip-content p{color:rgba(255,255,255,.85);font-size:14.5px;line-height:1.7;margin-bottom:24px}
+
+/* ── MENU PAGE ───────────────────────────────────────────────────── */
+/* Hero with pills overlay */
+.menu-hero-wrap{
+  position:relative;height:360px;
+  background-size:cover;background-position:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.menu-hero-wrap::before{content:'';position:absolute;inset:0;background:rgba(20,8,8,.38)}
+.menu-hero-title{position:relative;z-index:1;font-size:56px;color:#fff;margin-bottom:22px;font-family:'Poetsen One',cursive}
+.menu-pills-wrap{
+  position:relative;z-index:1;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  max-width:760px;padding:0 20px;
+}
+.menu-pill{
+  background:rgba(255,255,255,.92);color:var(--dark);
+  border:none;border-radius:999px;
+  padding:8px 20px;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.menu-pill:hover,.menu-pill.active{background:var(--red);color:#fff}
+
+/* Category sections */
+.menu-page-wrap{max-width:1000px;margin:0 auto;padding:0 32px 64px}
+.menu-cat-section{padding-top:48px}
+.menu-cat-title{
+  font-size:42px;color:var(--red);text-align:center;
+  margin-bottom:12px;font-family:'Poetsen One',cursive;font-weight:400;
+}
+
+/* Sub-tabs */
+.menu-subtabs{
+  display:flex;justify-content:center;gap:0;
+  border-bottom:1px solid #eee;margin-bottom:28px;
+}
+.menu-subtab{
+  font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:#bbb;padding:8px 16px;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;
+}
+.menu-subtab.active{color:var(--red);border-bottom-color:var(--red)}
+.menu-subtab:hover{color:var(--red)}
+
+/* Item grid — 2 columns */
+.menu-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.menu-item-row{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px 0;border-bottom:1px solid #f5f5f5;
+}
+.menu-item-row:last-child{border-bottom:none}
+.menu-item-row img{
+  width:96px;height:96px;border-radius:8px;object-fit:cover;flex-shrink:0;cursor:pointer;
+}
+.menu-item-body{flex:1;min-width:0;padding-right:8px}
+.menu-item-header{display:flex;align-items:baseline;gap:4px;margin-bottom:3px}
+.menu-item-name{
+  font-weight:700;font-size:13.5px;color:var(--dark);cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;
+}
+.menu-item-dots{
+  flex:1;border-bottom:1.5px dotted #ccc;margin:0 4px 3px;min-width:12px;
+}
+.menu-item-price{color:var(--red);font-weight:700;font-size:13px;white-space:nowrap;flex-shrink:0}
+.menu-item-desc{font-size:12px;color:#888;line-height:1.5;margin-bottom:0}
+.menu-add-btn{
+  flex-shrink:0;width:32px;height:32px;border-radius:50%;
+  background:var(--red);color:#fff;border:none;
+  font-size:16px;cursor:pointer;transition:background .2s;
+  display:flex;align-items:center;justify-content:center;margin-top:8px;
+}
+.menu-add-btn:hover{background:var(--red2)}
+
+/* Back to top button */
+.menu-back-btn{
+  display:inline-flex;background:var(--red);color:#fff;
+  border:none;border-radius:999px;padding:9px 22px;
+  font-size:13px;font-weight:700;cursor:pointer;transition:background .2s;
+  margin-top:20px;font-family:'Poppins',sans-serif;
+}
+.menu-back-btn:hover{background:var(--red2)}
+
+.add-to-cart-btn{
+  display:inline-block;background:var(--red);color:#fff;
+  border:none;border-radius:999px;padding:6px 16px;
+  font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;
+  align-self:flex-start;
+}
+.add-to-cart-btn:hover{background:var(--red2)}
+
+/* ── PRODUCT DETAIL ──────────────────────────────────────────────── */
+.breadcrumb{
+  max-width:1140px;margin:0 auto;padding:18px 32px 0;
+  font-size:13px;color:#aaa;
+}
+.breadcrumb a{color:var(--red);cursor:pointer}
+.breadcrumb a:hover{text-decoration:underline}
+.pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;max-width:1140px;margin:0 auto;padding:28px 32px 48px}
+.pd-img-wrap{position:relative;border-radius:12px;overflow:hidden;background:#f5f5f5;height:360px}
+.pd-img-wrap img{width:100%;height:100%;object-fit:cover}
+.pd-zoom{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,.9);border-radius:50%;
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:#555;cursor:pointer;
+}
+.pd-name{font-size:30px;font-weight:800;margin-bottom:6px;font-family:'Poppins',sans-serif}
+.pd-price-range{font-size:20px;font-weight:700;color:var(--red);margin-bottom:8px}
+.pd-desc-txt{font-size:14px;color:#777;margin-bottom:16px;line-height:1.6}
+.pd-option-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa;margin-bottom:6px}
+.pd-select{
+  width:100%;border:1.5px solid #e0e0e0;border-radius:8px;
+  padding:10px 14px;font-size:14px;background:#fff;margin-bottom:14px;
+}
+.pd-select:focus{outline:none;border-color:var(--red)}
+.pd-price-final{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:14px}
+.pd-add-row{display:flex;gap:12px;align-items:center;margin-bottom:20px}
+.qty-box{display:flex;align-items:center;border:1.5px solid #e0e0e0;border-radius:999px;overflow:hidden}
+.qty-btn{width:34px;height:34px;background:none;font-size:18px;color:#555;transition:background .15s}
+.qty-btn:hover{background:#f5f5f5}
+.qty-num{min-width:32px;text-align:center;font-weight:700;font-size:14px}
+.pd-meta{font-size:12px;color:#bbb;margin-top:4px}
+.pd-meta strong{color:#999}
+.pd-tabs{display:flex;gap:0;border-bottom:2px solid #eee;margin:0 32px;max-width:1140px}
+.pd-tab{padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;color:#aaa;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.pd-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.pd-tab-content{padding:20px 32px;max-width:1140px;font-size:14px;color:#666;line-height:1.7}
+.related-sec{background:#f9f9f9;padding:40px 32px}
+.related-sec h2{max-width:1140px;margin:0 auto 28px;font-size:24px;font-weight:800}
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1140px;margin:0 auto}
+.related-card{background:#fff;border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.related-card img{width:100%;height:160px;object-fit:cover}
+.related-card-body{padding:12px}
+.related-card-tag{font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.related-card-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.related-card-stars{color:#f5a623;font-size:12px;margin-bottom:4px}
+.related-card-price{color:var(--red);font-weight:700;font-size:13px;margin-bottom:8px}
+
+/* ── CART DRAWER ─────────────────────────────────────────────────── */
+#cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1800;display:none}
+#cart-side{
+  position:fixed;top:0;right:-440px;width:420px;height:100vh;
+  background:#fff;z-index:1900;display:flex;flex-direction:column;
+  box-shadow:-6px 0 32px rgba(0,0,0,.15);transition:right .3s cubic-bezier(.4,0,.2,1);
+}
+#cart-side.open{right:0}
+.cs-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;background:var(--red);
+}
+.cs-head-title{font-size:15px;font-weight:700;color:#fff}
+.cs-close{background:none;color:#fff;font-size:20px;cursor:pointer;transition:opacity .2s;padding:4px}
+.cs-close:hover{opacity:.7}
+.cs-body{flex:1;overflow-y:auto;padding:16px 22px}
+.cs-empty{text-align:center;padding:48px 20px;color:#ccc}
+.cs-empty i{font-size:44px;margin-bottom:14px;display:block}
+.cs-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start}
+.cs-item:last-child{border-bottom:none}
+.cs-item img{width:68px;height:68px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.cs-item-info{flex:1}
+.cs-item-name{font-weight:700;font-size:13.5px;margin-bottom:2px}
+.cs-item-size{font-size:12px;color:#aaa;margin-bottom:6px}
+.cs-item-row{display:flex;align-items:center;justify-content:space-between}
+.cs-qty{display:flex;align-items:center;gap:6px}
+.cs-qty-btn{background:#f5f5f5;border:none;width:24px;height:24px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555}
+.cs-qty-num{font-size:13px;font-weight:700;min-width:20px;text-align:center}
+.cs-item-price{font-weight:700;font-size:14px;color:var(--red)}
+.cs-item-del{background:none;color:#ddd;font-size:14px;cursor:pointer;flex-shrink:0;padding:4px;transition:color .2s;margin-top:2px}
+.cs-item-del:hover{color:var(--red)}
+.cs-foot{padding:18px 22px;border-top:1px solid #eee;background:#fafafa}
+.cs-total-row{display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0}
+.cs-total-row.grand{font-weight:800;font-size:15px;border-top:1px solid #eee;padding-top:10px;margin-top:6px}
+.cs-total-row.grand span:last-child{color:var(--red)}
+.cs-foot-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+
+/* ── FLOATING CART FAB ───────────────────────────────────────────── */
+#cart-fab{
+  position:fixed;bottom:32px;right:32px;z-index:1700;
+  width:56px;height:56px;border-radius:50%;
+  background:var(--red);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:21px;box-shadow:0 6px 24px rgba(236,70,67,.35);
+  transition:background .2s,transform .15s;
+}
+#cart-fab:hover{background:var(--red2);transform:scale(1.08)}
+#cart-fab .cart-dot{
+  position:absolute;top:-4px;right:-4px;
+  background:#fff;color:var(--red);
+  font-size:10px;font-weight:800;
+  min-width:18px;height:18px;
+  border-radius:999px;padding:0 4px;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--red);
+  transition:transform .28s;
+}
+#cart-fab .cart-dot.pop{transform:scale(1.35)}
+
+/* ── TOAST ───────────────────────────────────────────────────────── */
+#toast{
+  position:fixed;bottom:28px;right:100px;z-index:3000;
+  background:var(--dark);color:#fff;padding:12px 22px;
+  border-radius:999px;font-size:13.5px;font-weight:600;
+  box-shadow:0 6px 24px rgba(0,0,0,.2);
+  transform:translateY(80px);opacity:0;transition:all .3s ease;
+  pointer-events:none;
+}
+#toast.show{transform:translateY(0);opacity:1}
+
+/* ── CHECKOUT ────────────────────────────────────────────────────── */
+.checkout-h1{font-size:38px;padding:36px 48px 0;max-width:1140px;margin:0 auto}
+.checkout-wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;max-width:1140px;margin:0 auto;padding:32px 48px 64px;align-items:start}
+.checkout-title{font-size:18px;font-weight:800;margin-bottom:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#444}
+.field input,.field select,.field textarea{
+  width:100%;border:1.5px solid #ddd;border-radius:8px;
+  padding:10px 14px;font-size:14px;background:#fff;transition:border-color .2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.order-box{background:#fff;border-radius:14px;padding:28px;box-shadow:0 4px 20px rgba(0,0,0,.08);border:1px solid #eee}
+.order-box-title{font-size:16px;font-weight:800;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--red)}
+.order-row{display:flex;justify-content:space-between;padding:9px 0;font-size:13.5px;border-bottom:1px solid #f5f5f5}
+.order-row-name{font-weight:600}
+.order-row-meta{font-size:11.5px;color:#aaa}
+.order-row-price{font-weight:600}
+.order-total-row{display:flex;justify-content:space-between;padding:14px 0 0;font-size:15px;font-weight:800}
+.order-total-row span:last-child{color:var(--red)}
+.sinpe-box{background:#fff3f3;border:1px solid #fcc;border-radius:8px;padding:16px;margin:16px 0;font-size:13px;color:#555;line-height:1.65}
+.sinpe-box strong{color:var(--dark)}
+.sinpe-note{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#888;margin-bottom:14px;line-height:1.6}
+.privacy-txt{font-size:12px;color:#aaa;line-height:1.6;margin:12px 0}
+.privacy-txt a{color:var(--red)}
+.checkout-accordion{border:1px solid #e5e5e5;border-radius:8px;margin-bottom:16px;overflow:hidden}
+.checkout-acc-head{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;font-size:13.5px;font-weight:600;background:#f9f9f9}
+.checkout-acc-head input[type=radio]{accent-color:var(--red)}
+.checkout-acc-body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .3s}
+.checkout-acc-body.open{max-height:200px;padding:14px 16px}
+
+/* ── CONFIRMATION ────────────────────────────────────────────────── */
+#page-confirmation{background:var(--light);min-height:60vh}
+.conf-wrap{max-width:740px;margin:0 auto;padding:56px 32px}
+.conf-header{display:flex;align-items:center;gap:14px;margin-bottom:36px;justify-content:center}
+.conf-check{width:36px;height:36px;border-radius:50%;background:#e8f5e9;display:flex;align-items:center;justify-content:center;color:#43a047;font-size:18px;flex-shrink:0}
+.conf-order-info h2{font-size:17px;font-weight:800;margin-bottom:2px}
+.conf-order-info p{font-size:14px;color:#888}
+.conf-bowl{text-align:center;margin:20px 0}
+.conf-bowl-svg{font-size:80px;display:block;margin:0 auto 12px}
+.conf-tagline{text-align:center;font-size:18px;font-weight:800;font-style:italic;margin-bottom:32px}
+.conf-table{background:#fff;border-radius:12px;border:1px solid #e5e5e5;overflow:hidden;margin-bottom:24px}
+.conf-table-title{background:#f9f9f9;padding:14px 20px;font-size:14px;font-weight:700;border-bottom:1px solid #eee;text-align:center}
+.conf-row{display:flex;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #f5f5f5;font-size:13.5px}
+.conf-row:last-child{border-bottom:none}
+.conf-row-label{color:#888}
+.conf-row-val{font-weight:600}
+.conf-detail-table{background:#fff;border-radius:12px;border:1px solid #e5e5e5;overflow:hidden}
+.conf-detail-head{display:grid;grid-template-columns:1fr auto;padding:12px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa;border-bottom:1px solid #eee;background:#f9f9f9}
+.conf-detail-row{display:grid;grid-template-columns:1fr auto;padding:12px 20px;font-size:13.5px;border-bottom:1px solid #f5f5f5}
+.conf-detail-row:last-child{border-bottom:none}
+.conf-detail-row a{color:var(--red)}
+
+/* ── GALLERY CAROUSEL ────────────────────────────────────────────── */
+.carousel-wrap{position:relative;overflow:hidden;height:520px}
+.carousel-track{display:flex;height:100%;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.carousel-slide{flex:0 0 100%;height:100%}
+.carousel-slide img{width:100%;height:100%;object-fit:cover;object-position:center center}
+.carousel-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(255,255,255,.85);border:none;
+  width:40px;height:40px;border-radius:50%;
+  font-size:16px;cursor:pointer;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.2);transition:background .2s;
+}
+.carousel-btn:hover{background:#fff}
+.carousel-btn.prev{left:16px}
+.carousel-btn.next{right:16px}
+.carousel-dots{
+  display:flex;justify-content:center;gap:8px;margin-top:14px;
+}
+.carousel-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,.4);border:none;cursor:pointer;
+  transition:background .2s;padding:0;
+}
+.carousel-dot.active{background:#fff}
+
+/* ── ABOUT ───────────────────────────────────────────────────────── */
+.story-layout{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;max-width:1140px;margin:0 auto;padding:68px 48px}
+.story-label{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--red);text-transform:uppercase;margin-bottom:10px}
+.story-h{font-size:32px;font-weight:800;margin-bottom:16px;line-height:1.2}
+.story-p{font-size:14.5px;color:#666;line-height:1.75;margin-bottom:12px}
+.story-img{border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.story-img img{width:100%;height:360px;object-fit:cover}
+.gallery-wrap{background:var(--olive);position:relative}
+.wave-top{display:block;width:100%;line-height:0}
+.wave-bot{display:block;width:100%;line-height:0}
+.gallery-inner{padding:20px 48px 36px;max-width:1140px;margin:0 auto}
+.gallery-inner h2{font-size:36px;font-weight:800;text-align:center;color:#fff;margin-bottom:24px}
+.gallery-full{border-radius:12px;overflow:hidden;height:280px}
+.gallery-full img{width:100%;height:100%;object-fit:cover}
+.reviews-layout{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1140px;margin:0 auto}
+.review-card{background:var(--white);border-radius:12px;padding:24px;box-shadow:0 3px 16px rgba(0,0,0,.07)}
+.review-avatar{width:48px;height:48px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:20px;color:#fff}
+.review-stars{color:#f5a623;font-size:15px;letter-spacing:2px;margin-bottom:10px}
+.review-text{font-size:13.5px;color:#555;line-height:1.65;margin-bottom:14px}
+.review-name{font-weight:700;font-size:13.5px}
+.review-source{font-size:12px;color:#bbb;margin-top:2px}
+.faq-wrap{background:var(--beige);position:relative}
+.faq-inner{padding:12px 48px 60px;max-width:800px;margin:0 auto}
+.faq-inner h2{font-size:36px;font-weight:800;color:var(--red);text-align:center;margin-bottom:32px;font-style:italic}
+.faq-item{background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.05);overflow:hidden}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;cursor:pointer;font-size:14px;font-weight:600;transition:color .2s}
+.faq-q:hover{color:var(--red)}
+.faq-q i{font-size:11px;color:#bbb;transition:transform .3s;flex-shrink:0}
+.faq-q.open i{transform:rotate(180deg);color:var(--red)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-a.open{max-height:200px}
+.faq-a p{padding:0 20px 16px;font-size:13.5px;color:#666;line-height:1.65}
+
+/* ── CONTACT ─────────────────────────────────────────────────────── */
+.contact-top{background:var(--salmon);padding:48px 48px 0}
+.contact-top-inner{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:56px;padding-bottom:48px}
+.contact-info-title{font-size:24px;font-weight:800;color:#fff;margin-bottom:22px}
+.contact-info-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.contact-info-item i{color:#fff;font-size:15px;margin-top:3px;width:18px;flex-shrink:0}
+.contact-info-item p{color:#fff;font-size:14px;line-height:1.5}
+.contact-form-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:18px}
+.contact-input{
+  width:100%;border:none;border-radius:8px;padding:10px 14px;
+  font-size:14px;background:rgba(255,255,255,.9);margin-bottom:12px;
+  transition:background .2s;
+}
+.contact-input:focus{outline:none;background:#fff}
+.contact-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.map-section{padding:56px 48px}
+.map-section h2{font-size:36px;font-weight:800;text-align:center;margin-bottom:28px}
+.map-box{border-radius:14px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,.1);height:320px;position:relative;max-width:1140px;margin:0 auto;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:14px}
+.map-box img{width:100%;height:100%;object-fit:cover;opacity:.9}
+.map-pin{position:absolute;bottom:20px;left:20px;background:#fff;border-radius:10px;padding:12px 16px;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.map-pin p{font-weight:700;font-size:13px;margin-bottom:2px}
+.map-pin span{font-size:11.5px;color:#aaa}
+.work-wrap{background:var(--beige);position:relative}
+.work-inner{padding:16px 48px 64px;max-width:900px;margin:0 auto}
+.work-inner h2{font-size:32px;font-weight:800;text-align:center;margin-bottom:8px}
+.work-inner .sub{text-align:center;color:#888;font-size:14px;margin-bottom:28px}
+.file-zone{border:2px dashed #ccc;border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;color:#aaa;font-size:14px;margin-bottom:14px}
+.file-zone:hover{border-color:var(--red);color:var(--red)}
+.file-zone i{font-size:28px;margin-bottom:8px;display:block}
+
+/* ── RESERVATION ─────────────────────────────────────────────────── */
+.res-form-wrap{max-width:900px;margin:0 auto;padding:56px 48px}
+.res-form-wrap h2{font-size:36px;font-weight:800;text-align:center;margin-bottom:8px;font-family:'Poetsen One',cursive}
+.res-form-wrap .sub{text-align:center;color:#888;font-size:14px;margin-bottom:36px}
+.res-form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.res-field{display:flex;flex-direction:column;gap:4px}
+.res-field label{font-size:12px;font-weight:600;color:#888}
+.res-field input,.res-field select,.res-field textarea{
+  border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 14px;
+  font-size:14px;width:100%;background:#fff;
+}
+.res-field input:focus,.res-field select:focus,.res-field textarea:focus{outline:none;border-color:var(--red)}
+
+/* ── BLOG ────────────────────────────────────────────────────────── */
+.blog-wrap{max-width:820px;margin:0 auto;padding:48px 32px 64px}
+.blog-wrap h2{font-size:36px;font-weight:800;text-align:center;margin-bottom:40px}
+.blog-post{margin-bottom:52px;border-bottom:1px solid #f0f0f0;padding-bottom:52px}
+.blog-post:last-child{border-bottom:none;padding-bottom:0}
+.blog-post-img{border-radius:12px;overflow:hidden;height:280px;margin-bottom:20px}
+.blog-post-img img{width:100%;height:100%;object-fit:cover}
+.blog-post-title{font-size:24px;font-weight:800;margin-bottom:8px;line-height:1.25;color:var(--dark)}
+.blog-post-cat{display:inline-block;color:var(--red);font-size:12.5px;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
+.blog-post-excerpt{font-size:14px;color:#666;line-height:1.7;margin-bottom:14px}
+.blog-read-more{color:var(--red);font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+.blog-read-more:hover{opacity:.75}
+
+/* ── FOOTER ──────────────────────────────────────────────────────── */
+footer{background:var(--red);padding:40px 48px 24px}
+.footer-links-row{display:flex;justify-content:center;gap:28px;margin-bottom:28px;flex-wrap:wrap}
+.footer-links-row a{font-size:13px;font-weight:600;color:rgba(255,255,255,.85);transition:color .2s;cursor:pointer}
+.footer-links-row a:hover,.footer-links-row a.active{color:#fff}
+.footer-center{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:20px}
+.footer-logo-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.footer-logo-img{width:64px;height:64px;border-radius:50%;object-fit:cover}
+.footer-socials{display:flex;gap:10px}
+.footer-socials a{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;transition:background .2s;cursor:pointer}
+.footer-socials a:hover{background:rgba(255,255,255,.35)}
+.footer-newsletter{text-align:right}
+.footer-newsletter p{font-size:12.5px;color:rgba(255,255,255,.9);font-weight:600;margin-bottom:10px}
+.footer-subscribe-row{display:flex;gap:6px}
+.footer-subscribe-row input{
+  border:none;border-radius:999px;padding:9px 16px;font-size:13px;
+  background:rgba(255,255,255,.9);flex:1;min-width:180px;
+}
+.footer-subscribe-row input:focus{outline:none;background:#fff}
+.footer-subscribe-row button{background:#fff;color:var(--red);border-radius:999px;padding:9px 18px;font-size:13px;font-weight:700;border:none;cursor:pointer;white-space:nowrap}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(255,255,255,.15);flex-wrap:wrap;gap:8px}
+.footer-hours{font-size:12.5px;color:rgba(255,255,255,.85);font-style:italic;line-height:1.5}
+.footer-hours strong{font-style:normal}
+.footer-dev{font-size:11.5px;color:rgba(255,255,255,.6)}
+.footer-copy{font-size:12px;color:rgba(255,255,255,.65)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <img class="nav-logo-img" id="nav-logo" src="../Module 05/360 Cafe SEO logo.png" alt="360 Café" onclick="go('home')">
+  <div class="nav-links">
+    <a onclick="go('home')" data-page="home" class="active" data-i18n="nav_home">Home</a>
+    <a onclick="go('menu')" data-page="menu" data-i18n="nav_menu">Menu</a>
+    <a onclick="go('reservation')" data-page="reservation" data-i18n="nav_res">Reservations</a>
+    <a onclick="go('blog')" data-page="blog" data-i18n="nav_blog">Blog</a>
+    <a onclick="go('about')" data-page="about" data-i18n="nav_about">About Us</a>
+    <a onclick="go('contact')" data-page="contact" data-i18n="nav_contact">Contact Us</a>
+    <div class="nav-lang" id="lang-btn" onclick="toggleLang()" style="margin-left:8px;padding:6px 10px;border-radius:4px;transition:background .2s" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''">
+      <span id="lang-flag" style="font-size:16px">🇪🇸</span>&nbsp;<span id="lang-label">ES</span>
+    </div>
+  </div>
+</nav>
+
+<!-- CART DRAWER -->
+<div id="cart-overlay" onclick="toggleCart()"></div>
+<div id="cart-side">
+  <div class="cs-head">
+    <span class="cs-head-title" id="cs-count-label">0 items in cart</span>
+    <button class="cs-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cs-body" id="cs-body">
+    <div class="cs-empty"><i class="fas fa-shopping-bag"></i><br><span data-i18n="cart_empty">No products in the cart.</span></div>
+  </div>
+  <div class="cs-foot" id="cs-foot" style="display:none">
+    <div class="cs-total-row"><span data-i18n="subtotal">Subtotal</span><span id="cs-subtotal">₡0</span></div>
+    <div class="cs-total-row grand"><span data-i18n="total">Total</span><span id="cs-total">₡0</span></div>
+    <div class="cs-foot-btns">
+      <button class="btn btn-outline-red btn-sm" style="border-radius:999px" onclick="go('cart');toggleCart()" data-i18n="cs_view">View Cart</button>
+      <button class="btn btn-green btn-sm" style="border-radius:999px" onclick="go('checkout');toggleCart()" data-i18n="cs_checkout">Checkout</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING CART FAB -->
+<button id="cart-fab" onclick="toggleCart()" aria-label="Open cart">
+  <i class="fas fa-shopping-cart"></i>
+  <span class="cart-dot" id="cart-count">0</span>
+</button>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══════════════════════ HOME ══════════════════════ -->
+<div id="page-home" class="page active">
+
+  <section class="hero" id="home-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title" data-i18n="hero_title">Welcome to the<br>360 Café family!</h1>
+      <p class="hero-sub" data-i18n="hero_sub">At our restaurant, you're more than just a guest — you're part of the family. From the moment you step through our doors we invite you to relax, share stories, and savor the comforting food of home-cooked meals made with lots of love.</p>
+      <button class="btn btn-red" onclick="go('menu')" data-i18n="hero_cta">Order Now</button>
+    </div>
+  </section>
+
+  <section class="sec" style="background:#fff">
+    <div class="wrap">
+      <h2 class="sec-title red" data-i18n="sec_menu_title">Explore our Menu</h2>
+      <p class="sec-sub" data-i18n="sec_menu_sub">Discover a wide variety of options for lunch, dinner, and coffee time!</p>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="go('menu');scrollTocat('drinks')">
+          <div class="menu-card-img-wrap"><img id="hmc1" src="" alt=""></div>
+          <div class="menu-card-label" data-i18n="hmc_drinks">Drinks and coffee</div>
+        </div>
+        <div class="menu-card" onclick="go('menu');scrollTocat('appetizers')">
+          <div class="menu-card-img-wrap"><img id="hmc2" src="" alt=""></div>
+          <div class="menu-card-label" data-i18n="hmc_app">Appetizers</div>
+        </div>
+        <div class="menu-card" onclick="go('menu');scrollTocat('entrees')">
+          <div class="menu-card-img-wrap"><img id="hmc3" src="" alt=""></div>
+          <div class="menu-card-label" data-i18n="hmc_ent">Entrées</div>
+        </div>
+        <div class="menu-card" onclick="go('menu');scrollTocat('fastfood')">
+          <div class="menu-card-img-wrap"><img id="hmc4" src="" alt=""></div>
+          <div class="menu-card-label" data-i18n="hmc_ff">Fast Food</div>
+        </div>
+        <div class="menu-card" onclick="go('menu');scrollTocat('crepes')">
+          <div class="menu-card-img-wrap"><img id="hmc5" src="" alt=""></div>
+          <div class="menu-card-label" data-i18n="hmc_cr">Crepes &amp; Waffles</div>
+        </div>
+        <div class="menu-card" onclick="go('menu');scrollTocat('pastries')">
+          <div class="menu-card-img-wrap"><img id="hmc6" src="" alt=""></div>
+          <div class="menu-card-label" data-i18n="hmc_pas">Pastries</div>
+        </div>
+      </div>
+      <div class="sec-cta">
+        <button class="btn btn-red" onclick="go('menu')" data-i18n="sec_menu_more">Explore more</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="res-strip" id="home-res-bg">
+    <div class="res-strip-content">
+      <h2 data-i18n="res_strip_title">Reservations</h2>
+      <p data-i18n="res_strip_p">At our restaurant, you're more than just a guest — you're part of the family. From the moment you step through our doors we invite you to relax, share stories, and savor the comforting food of home-cooked meals made with love.</p>
+      <button class="btn btn-outline-white" onclick="go('reservation')" data-i18n="res_strip_cta">Book a table</button>
+    </div>
+  </section>
+
+</div><!-- /home -->
+
+<!-- ══════════════════════ MENU ══════════════════════ -->
+<div id="page-menu" class="page">
+  <div class="menu-hero-wrap" id="menu-hero-bg">
+    <h1 class="menu-hero-title" data-i18n="nav_menu">Menu</h1>
+    <div class="menu-pills-wrap" id="menu-pills"></div>
+  </div>
+  <div class="menu-page-wrap" id="menu-all-content"></div>
+</div><!-- /menu -->
+
+<!-- ══════════════════════ PRODUCT ══════════════════════ -->
+<div id="page-product" class="page">
+  <div class="breadcrumb">
+    <a onclick="go('home')" data-i18n="bc_home">Home</a> &rsaquo;
+    <a onclick="go('menu')" data-i18n="nav_menu">Menu</a> &rsaquo;
+    <a id="bc-cat" onclick="go('menu')">Drinks</a> &rsaquo;
+    <span id="bc-name">Product</span>
+  </div>
+  <div class="pd-grid">
+    <div class="pd-img-wrap">
+      <img id="pd-img" src="" alt="">
+      <div class="pd-zoom"><i class="fas fa-search-plus"></i></div>
+    </div>
+    <div>
+      <h2 class="pd-name" id="pd-name">American Coffee</h2>
+      <p class="pd-price-range" id="pd-price-range">₡1,500 – ₡2,500</p>
+      <p class="pd-desc-txt" id="pd-desc">Espresso with hot water.</p>
+      <div id="pd-size-section" style="display:none">
+        <div class="pd-option-label" data-i18n="pd_size">Size</div>
+        <select class="pd-select" id="pd-size" onchange="updatePdTotal()">
+          <option value="1500">8 oz. — ₡1,500</option>
+          <option value="2500" selected>12 oz. — ₡2,500</option>
+        </select>
+      </div>
+      <div class="pd-option-label" data-i18n="pd_instructions">Special instructions</div>
+      <textarea id="pd-instructions" data-i18n-ph="pd_instructions_ph" placeholder="Add a note…" style="width:100%;min-height:70px;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;color:#555;resize:vertical;outline:none;transition:border .2s;box-sizing:border-box;margin-bottom:14px;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='#ddd'"></textarea>
+      <div class="pd-add-row">
+        <div class="qty-box">
+          <button class="qty-btn" onclick="chQty(-1)">−</button>
+          <span class="qty-num" id="pd-qty">1</span>
+          <button class="qty-btn" onclick="chQty(1)">+</button>
+        </div>
+        <button class="btn btn-red" style="flex:1;border-radius:999px" onclick="addCurrent()" data-i18n="pd_add">Add to cart</button>
+      </div>
+      <p class="pd-meta"><strong data-i18n="pd_sku">SKU:</strong> N/A &nbsp;·&nbsp; <strong data-i18n="pd_cat_lbl">Categories:</strong> <span id="pd-cat-meta">Drinks</span> &nbsp;·&nbsp; <strong data-i18n="pd_tag">Tag:</strong> café</p>
+    </div>
+  </div>
+  <div class="pd-tabs" style="max-width:1140px;margin:0 auto">
+    <span class="pd-tab active" onclick="showTab(this,'add-info')" data-i18n="pd_tab1">Description</span>
+    <span class="pd-tab" onclick="showTab(this,'reviews-tab')" data-i18n="pd_tab2">Additional information</span>
+  </div>
+  <div id="add-info" class="pd-tab-content" style="max-width:1140px;margin:0 auto"><p id="pd-desc-long">Espresso with hot water.</p></div>
+  <div id="reviews-tab" class="pd-tab-content" style="display:none;max-width:1140px;margin:0 auto"><p><strong data-i18n="pd_size">Size</strong> — 8 oz, 12 oz (default)</p></div>
+  <div class="related-sec">
+    <h2 data-i18n="pd_related">Related products</h2>
+    <div class="related-grid" id="related-grid"></div>
+  </div>
+</div><!-- /product -->
+
+<!-- ══════════════════════ CART ══════════════════════ -->
+<div id="page-cart" class="page">
+  <div style="max-width:1140px;margin:0 auto;padding:40px 48px 64px">
+    <h1 style="font-size:36px;margin-bottom:28px" data-i18n="cart_title">Cart</h1>
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:32px;align-items:start">
+      <div>
+        <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+          <thead>
+            <tr style="background:#f9f9f9">
+              <th style="width:40px;padding:14px 16px"></th>
+              <th style="padding:14px 16px;text-align:left;font-size:13px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:.06em" data-i18n="th_product">Product</th>
+              <th style="padding:14px 16px;text-align:center;font-size:13px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:.06em" data-i18n="th_price">Price</th>
+              <th style="padding:14px 16px;text-align:center;font-size:13px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:.06em" data-i18n="th_qty">Quantity</th>
+              <th style="padding:14px 16px;text-align:right;font-size:13px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:.06em" data-i18n="subtotal">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="cart-tbody"></tbody>
+        </table>
+        <div style="text-align:right;margin-top:12px">
+          <button class="btn btn-outline-red btn-sm" onclick="toast(t('toast_cart_update'))" data-i18n="cart_update">Update cart</button>
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div style="font-size:16px;font-weight:800;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--red)" data-i18n="ct_title">Cart totals</div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;border-bottom:1px solid #f5f5f5">
+          <span style="color:#888" data-i18n="subtotal">Subtotal</span><span id="ct-sub" style="font-weight:700">₡0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;border-bottom:1px solid #f5f5f5">
+          <span style="color:#888" data-i18n="shipping">Shipping</span>
+          <span id="ct-ship-opts" style="font-size:13px;color:#555;text-align:right">• Express Service<br>• Pickup</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:14px 0 0;font-size:16px;font-weight:800">
+          <span data-i18n="total">Total</span><span id="ct-total" style="color:var(--red)">₡0</span>
+        </div>
+        <button class="btn btn-red" style="width:100%;border-radius:999px;font-size:15px;padding:14px;margin-top:18px" onclick="go('checkout')" data-i18n="ct_proceed">
+          Proceed to checkout
+        </button>
+      </div>
+    </div>
+  </div>
+</div><!-- /cart -->
+
+<!-- ══════════════════════ CHECKOUT ══════════════════════ -->
+<div id="page-checkout" class="page" style="background:#fff">
+  <div class="checkout-h1"><h1 data-i18n="co_title">Checkout</h1></div>
+  <div class="checkout-wrap">
+    <div>
+      <div class="checkout-title" data-i18n="co_billing">Billing details</div>
+      <div class="field-row">
+        <div class="field"><label data-i18n="lbl_fn">First name *</label><input type="text" placeholder="María"></div>
+        <div class="field"><label data-i18n="lbl_ln">Last name *</label><input type="text" placeholder="Rodríguez"></div>
+      </div>
+      <div class="field">
+        <label data-i18n="lbl_country">Country / Region *</label>
+        <select><option>Costa Rica</option></select>
+      </div>
+      <div class="field"><label data-i18n="lbl_street">Street address *</label><input type="text" data-i18n-ph="ph_street" placeholder="House number and street name"></div>
+      <div class="field"><label data-i18n="lbl_city">Town / City *</label><input type="text" placeholder="Alajuela"></div>
+      <div class="field">
+        <label data-i18n="lbl_prov">Province *</label>
+        <select><option>Alajuela</option><option>San José</option><option>Heredia</option><option>Cartago</option><option>Guanacaste</option><option>Puntarenas</option><option>Limón</option></select>
+      </div>
+      <div class="field"><label data-i18n="lbl_zip">Postcode / ZIP *</label><input type="text" placeholder="20101"></div>
+      <div class="field"><label data-i18n="lbl_phone">Phone *</label><input type="tel" placeholder="+506 2487-9467"></div>
+      <div class="field"><label data-i18n="lbl_email">Email address *</label><input type="email" placeholder="you@example.com"></div>
+      <label style="display:flex;align-items:center;gap:10px;font-size:13.5px;cursor:pointer;margin-bottom:16px">
+        <input type="checkbox" style="accent-color:var(--red);width:15px;height:15px">
+        <span data-i18n="lbl_acc">Create an account?</span>
+      </label>
+      <div class="checkout-accordion">
+        <div class="checkout-acc-head" onclick="toggleAcc(this)">
+          <input type="radio" name="ship"> <span data-i18n="lbl_ship_alt">Ship to a different address?</span>
+        </div>
+        <div class="checkout-acc-body">
+          <div class="field"><label data-i18n="lbl_street">Street address</label><input type="text" data-i18n-ph="ph_alt_addr" placeholder="Address"></div>
+        </div>
+      </div>
+      <div class="field"><label data-i18n="lbl_notes">Order notes (optional)</label><textarea rows="3" data-i18n-ph="ph_notes" placeholder="Notes about your order, e.g. special notes for delivery."></textarea></div>
+    </div>
+    <div>
+      <div class="order-box">
+        <div class="order-box-title" data-i18n="co_your_order">Your order</div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;padding-bottom:10px;border-bottom:1px solid #eee;margin-bottom:4px">
+          <span data-i18n="th_product">Product</span><span data-i18n="subtotal">Subtotal</span>
+        </div>
+        <div id="co-items"></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13.5px;border-bottom:1px solid #f5f5f5">
+          <span style="color:#888" data-i18n="subtotal">Subtotal</span><span id="co-sub" style="font-weight:700">₡0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13.5px;border-bottom:1px solid #f5f5f5">
+          <span style="color:#888" data-i18n="co_shipment">Shipment</span><span style="color:#555" data-i18n="co_pickup">Pick up order</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13.5px;border-bottom:1px solid #f5f5f5">
+          <span style="color:#888" data-i18n="co_location">Location</span>
+          <span style="color:var(--red);cursor:pointer" onclick="toast(t('toast_location'))" data-i18n="co_find_loc">Find Location</span>
+        </div>
+        <div class="order-total-row"><span data-i18n="total">Total</span><span id="co-total">₡0</span></div>
+        <div style="font-size:13.5px;font-weight:800;margin:18px 0 10px" data-i18n="sinpe_title">Payment by SINPE Mobile</div>
+        <div class="sinpe-box" id="sinpe-box"></div>
+        <div class="sinpe-note" id="sinpe-note"></div>
+        <div class="privacy-txt" id="privacy-txt"></div>
+        <button class="btn btn-red" style="width:100%;font-size:15px;padding:14px;border-radius:999px" onclick="placeOrder()" data-i18n="place_order">
+          Place order
+        </button>
+      </div>
+    </div>
+  </div>
+</div><!-- /checkout -->
+
+<!-- ══════════════════════ CONFIRMATION ══════════════════════ -->
+<div id="page-confirmation" class="page">
+  <div class="conf-wrap">
+    <div class="conf-header">
+      <div class="conf-check"><i class="fas fa-check"></i></div>
+      <div class="conf-order-info">
+        <h2 id="conf-order-num">Order #4791</h2>
+        <p id="conf-thanks">Thank you!</p>
+      </div>
+    </div>
+    <div class="conf-bowl">
+      <div style="font-size:72px;text-align:center;margin-bottom:10px">🍜</div>
+    </div>
+    <p class="conf-tagline" data-i18n="conf_tagline">Your food is in the kitchen.</p>
+    <div class="conf-table">
+      <div class="conf-table-title" data-i18n="conf_title">Order confirmation</div>
+      <div class="conf-row"><span class="conf-row-label" data-i18n="conf_num_lbl">Order number</span><span class="conf-row-val" id="conf-num">4791</span></div>
+      <div class="conf-row"><span class="conf-row-label" data-i18n="conf_date_lbl">Date</span><span class="conf-row-val" id="conf-date"></span></div>
+      <div class="conf-row"><span class="conf-row-label" data-i18n="total">Total</span><span class="conf-row-val" id="conf-total" style="color:var(--red)">₡0</span></div>
+      <div class="conf-row"><span class="conf-row-label" data-i18n="conf_pay_lbl">Payment method</span><span class="conf-row-val" data-i18n="sinpe_title">Payment by SINPE Mobile</span></div>
+    </div>
+    <div class="conf-detail-table" style="margin-top:16px">
+      <div class="conf-table-title" data-i18n="conf_details">Order details</div>
+      <div class="conf-detail-head"><span data-i18n="th_product">Product</span><span data-i18n="total">Total</span></div>
+      <div id="conf-items"></div>
+      <div class="conf-detail-row"><span style="color:#888" data-i18n="subtotal">Subtotal</span><span id="conf-sub" style="font-weight:700">₡0</span></div>
+      <div class="conf-detail-row"><span style="color:#888" data-i18n="shipping">Shipping</span><span data-i18n="co_pickup">Pick up order</span></div>
+      <div class="conf-detail-row" style="font-weight:800"><span data-i18n="total">Total</span><span style="color:var(--red)" id="conf-total2">₡0</span></div>
+      <div class="conf-detail-row"><span style="color:#888" data-i18n="conf_pay_lbl">Payment method</span><span data-i18n="sinpe_title">Payment by SINPE Mobile</span></div>
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <button class="btn btn-red" onclick="go('home')" data-i18n="back_home">Back to home</button>
+    </div>
+  </div>
+</div><!-- /confirmation -->
+
+<!-- ══════════════════════ ABOUT ══════════════════════ -->
+<div id="page-about" class="page">
+
+  <div class="page-hero" id="about-hero-bg">
+    <h1 data-i18n="about_h">About us</h1>
+  </div>
+
+  <div class="story-layout">
+    <div>
+      <h2 class="story-h" data-i18n="story_title">Our history</h2>
+      <p class="story-p" data-i18n="story_p1">360 Café was born from a deep love for good coffee and authentic Costa Rican cuisine. We opened our doors in 2021 in the heart of Turrialba, welcoming neighbors, families, and travelers from around the world.</p>
+      <p class="story-p" data-i18n="story_p2">Every item on our menu is made with locally sourced ingredients, prepared with care and served with warmth. We believe that a great meal is about more than food — it's about connection.</p>
+      <p class="story-p" data-i18n="story_p3">Our team is passionate, our space is welcoming, and our coffee is always fresh. We can't wait to share our table with you.</p>
+      <br>
+      <button class="btn btn-red btn-sm" onclick="go('menu')" data-i18n="our_menu">Our Menu</button>
+    </div>
+    <div class="story-img">
+      <img id="story-img" src="" alt="360 Café interior">
+    </div>
+  </div>
+
+  <div class="gallery-wrap">
+    <svg class="wave-top" viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 L1440,0 L1440,35 C1080,70 360,0 0,35 Z" fill="#ffffff"/>
+    </svg>
+    <div class="gallery-inner">
+      <h2 data-i18n="gallery_h">Gallery</h2>
+      <div class="carousel-wrap">
+        <div class="carousel-track" id="gal-track"></div>
+        <button class="carousel-btn prev" onclick="galMove(-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-btn next" onclick="galMove(1)"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="carousel-dots" id="gal-dots"></div>
+    </div>
+    <svg class="wave-bot" viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,35 C360,0 1080,70 1440,35 L1440,70 L0,70 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+
+  <section class="sec" style="background:#fff">
+    <div class="wrap">
+      <h2 class="sec-title" style="margin-bottom:32px" data-i18n="reviews_h">Reviews</h2>
+      <div class="reviews-layout">
+        <div class="review-card">
+          <div class="review-avatar"><i class="fas fa-user"></i></div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text" data-i18n="rev1">"Absolutely the best café in Turrialba. The matcha latte is unlike anything I've had in Costa Rica — smooth, earthy, and perfectly balanced. The atmosphere is cozy and the staff are so welcoming."</p>
+          <div class="review-name">Sarah M.</div>
+          <div class="review-source">Google · March 2025</div>
+        </div>
+        <div class="review-card">
+          <div class="review-avatar"><i class="fas fa-user"></i></div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text" data-i18n="rev2">"We stopped here after a day at Volcán Turrialba and it was the perfect end to the trip. The crêpes were incredible — especially the banana and almond one. Will definitely come back."</p>
+          <div class="review-name">Carlos &amp; Family</div>
+          <div class="review-source">TripAdvisor · January 2025</div>
+        </div>
+        <div class="review-card">
+          <div class="review-avatar"><i class="fas fa-user"></i></div>
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text" data-i18n="rev3">"Great place to work remotely. Good WiFi, excellent coffee, friendly people. Prices are very reasonable for the quality. The fast food options are also surprisingly good."</p>
+          <div class="review-name">Lucas T.</div>
+          <div class="review-source">Google · February 2025</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="faq-wrap">
+    <svg class="wave-top" viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 L1440,0 L1440,35 C1080,70 360,0 0,35 Z" fill="#ffffff"/>
+    </svg>
+    <div class="faq-inner">
+      <h2 data-i18n="faq_h">FAQ</h2>
+      <div class="faq-item"><div class="faq-q" onclick="faq(this)"><span data-i18n="faq_q1">Do you accept walk-ins or only reservations?</span> <i class="fas fa-chevron-down"></i></div><div class="faq-a"><p data-i18n="faq_a1">We welcome walk-ins every day! Reservations are recommended for groups of 5 or more, especially on weekends.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="faq(this)"><span data-i18n="faq_q2">Are there vegetarian or vegan options?</span> <i class="fas fa-chevron-down"></i></div><div class="faq-a"><p data-i18n="faq_a2">Yes! Many of our dishes are vegetarian, and we offer almond, oat, and lactose-free milk for all coffee drinks.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="faq(this)"><span data-i18n="faq_q3">Can I order online for pickup or delivery?</span> <i class="fas fa-chevron-down"></i></div><div class="faq-a"><p data-i18n="faq_a3">Absolutely. Use our online menu to place an order, then choose between café pickup or local delivery at checkout.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="faq(this)"><span data-i18n="faq_q4">Is there free WiFi available?</span> <i class="fas fa-chevron-down"></i></div><div class="faq-a"><p data-i18n="faq_a4">Yes — free high-speed WiFi is available for all guests throughout the café.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="faq(this)"><span data-i18n="faq_q5">What payment methods do you accept?</span> <i class="fas fa-chevron-down"></i></div><div class="faq-a"><p data-i18n="faq_a5">We accept cash, SINPE Mobile, Visa, Mastercard, and American Express.</p></div></div>
+    </div>
+  </div>
+
+</div><!-- /about -->
+
+<!-- ══════════════════════ CONTACT ══════════════════════ -->
+<div id="page-contact" class="page">
+
+  <div class="page-hero" id="contact-hero-bg">
+    <h1 data-i18n="contact_h">Contact us</h1>
+  </div>
+
+  <div class="contact-top">
+    <div class="contact-top-inner">
+      <div>
+        <h2 class="contact-info-title" data-i18n="contact_title">Let's start a conversation</h2>
+        <div class="contact-info-item"><i class="fas fa-phone"></i><p>(506) 2487-9467</p></div>
+        <div class="contact-info-item"><i class="fas fa-phone"></i><p>8066-7522</p></div>
+        <div class="contact-info-item"><i class="fas fa-envelope"></i><p>360cafecr@gmail.com</p></div>
+        <div class="contact-info-item"><i class="fas fa-map-marker-alt"></i><p data-i18n="contact_addr">North side Catholic Church of Turrialba,<br>Alajuela, Costa Rica</p></div>
+        <div class="contact-info-item"><i class="fas fa-clock"></i><p data-i18n="contact_hours">Opening hours: Open daily 11:00 AM to 9:00 PM</p></div>
+      </div>
+      <div>
+        <h2 class="contact-form-title" data-i18n="form_title">Send us a message</h2>
+        <div class="contact-row">
+          <input class="contact-input" type="text" data-i18n-ph="ph_name" placeholder="Name *">
+          <input class="contact-input" type="text" data-i18n-ph="ph_lname" placeholder="Last name *">
+        </div>
+        <div class="contact-row">
+          <input class="contact-input" type="email" data-i18n-ph="ph_email" placeholder="Email *">
+          <input class="contact-input" type="tel" data-i18n-ph="ph_phone" placeholder="Phone">
+        </div>
+        <textarea class="contact-input" rows="4" data-i18n-ph="ph_msg" placeholder="Message *" style="resize:vertical"></textarea>
+        <button class="btn btn-red" onclick="toast(t('toast_msg_sent'))" data-i18n="send_btn">Send</button>
+      </div>
+    </div>
+    <svg viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;line-height:0;margin-bottom:-1px">
+      <path d="M0,35 C360,0 1080,70 1440,35 L1440,70 L0,70 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+
+  <div class="map-section">
+    <h2 data-i18n="loc_title">Our location</h2>
+    <div class="map-box" style="padding:0;background:none">
+      <iframe src="https://maps.google.com/maps?q=360+Cafe+y+Creperia+Turrialba+Costa+Rica&output=embed&z=16"
+        width="100%" height="100%" style="border:0;border-radius:14px"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+
+  <div class="work-wrap">
+    <svg class="wave-top" viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 L1440,0 L1440,35 C1080,70 360,0 0,35 Z" fill="#ffffff"/>
+    </svg>
+    <div class="work-inner">
+      <h2 data-i18n="work_title">Work with us!</h2>
+      <p class="sub" data-i18n="work_p">Are you interested in joining our team? We are always looking for motivated people who are passionate about gastronomy and customer service.</p>
+      <div class="field-row" style="margin-bottom:14px">
+        <div class="field"><label data-i18n="lbl_wname">Name</label><input class="contact-input" type="text" style="background:#fff;border:1.5px solid #e0e0e0;margin-bottom:0"></div>
+        <div class="field"><label data-i18n="lbl_wlname">Last Name</label><input class="contact-input" type="text" style="background:#fff;border:1.5px solid #e0e0e0;margin-bottom:0"></div>
+      </div>
+      <div class="field-row" style="margin-bottom:14px">
+        <div class="field"><label data-i18n="lbl_wpos">Select the position you would like to apply to</label>
+          <select class="contact-input" style="background:#fff;border:1.5px solid #e0e0e0;margin-bottom:0">
+            <option>Barista</option><option>Server</option><option>Kitchen</option><option>Manager</option>
+          </select>
+        </div>
+        <div class="field"><label data-i18n="lbl_wcontact">Contact number</label><input class="contact-input" type="tel" style="background:#fff;border:1.5px solid #e0e0e0;margin-bottom:0"></div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><label data-i18n="lbl_wmsg">Message</label><textarea rows="3" style="width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 14px;font-size:14px;background:#fff" data-i18n-ph="ph_tell" placeholder="Tell us about yourself…"></textarea></div>
+      <div class="file-zone" onclick="toast(t('toast_file'))">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <span data-i18n="file_drop">Drag &amp; Drop or <strong style="color:var(--red)">Choose Files</strong></span><br>
+        <small data-i18n="file_sub">Attach your CV or cover letter</small>
+      </div>
+      <button class="btn btn-red" onclick="toast(t('toast_apply'))" data-i18n="submit_btn">Submit</button>
+    </div>
+  </div>
+
+</div><!-- /contact -->
+
+<!-- ══════════════════════ RESERVATION ══════════════════════ -->
+<div id="page-reservation" class="page">
+
+  <div class="page-hero" id="res-hero-bg">
+    <h1 data-i18n="nav_res">Reservations</h1>
+  </div>
+
+  <div class="res-form-wrap">
+    <h2 data-i18n="res_form_title">Make your reservations here</h2>
+    <p class="sub" data-i18n="res_form_sub">Fill out this form to make your reservations for special events or any activity.</p>
+    <div class="res-form-row">
+      <div class="res-field"><label data-i18n="lbl_rname">Name</label><input type="text" data-i18n-ph="ph_rname" placeholder="Your name"></div>
+      <div class="res-field"><label data-i18n="lbl_rcontact">Contact number</label><input type="tel" placeholder="+506 ····-····"></div>
+      <div class="res-field"><label data-i18n="lbl_remail">Email</label><input type="email" placeholder="your@email.com"></div>
+    </div>
+    <div class="res-form-row">
+      <div class="res-field"><label data-i18n="lbl_rdate">Reservation date</label><input type="date"></div>
+      <div class="res-field"><label data-i18n="lbl_rtime">Reservation time</label><input type="time"></div>
+      <div class="res-field"><label data-i18n="lbl_rpeople">Number of people</label><input type="number" min="1" max="50" placeholder="2"></div>
+    </div>
+    <div class="res-field" style="margin-bottom:24px"><label data-i18n="lbl_rmsg">Message</label><textarea rows="4" data-i18n-ph="ph_rmsg" placeholder="Tell us about your event or any special requirements…" style="resize:vertical"></textarea></div>
+    <button class="btn btn-red" onclick="toast(t('toast_res'))" data-i18n="res_send">Send</button>
+  </div>
+
+</div><!-- /reservation -->
+
+<!-- ══════════════════════ BLOG ══════════════════════ -->
+<div id="page-blog" class="page" style="background:#fff">
+  <div class="blog-wrap">
+    <h2 data-i18n="blog_h">Our Blog</h2>
+    <div class="blog-post">
+      <div class="blog-post-img"><img id="blog-img1" src="" alt="Blog post 1"></div>
+      <h3 class="blog-post-title" data-i18n="blog1_title">Barista Secrets: How to Make the Perfect Milkshake at 360 Café</h3>
+      <span class="blog-post-cat" data-i18n="blog1_cat">MILKSHAKE</span>
+      <p class="blog-post-excerpt" data-i18n="blog1_excerpt">Hello! I'm the barista at 360 Café, here in Alajuela, and today I want to share with you some of my secrets for making a fruit smoothie.</p>
+      <a class="blog-read-more" onclick="toast(t('toast_blog'))"><span data-i18n="read_more">Read More</span> <i class="fas fa-arrow-right" style="font-size:11px"></i></a>
+    </div>
+    <div class="blog-post">
+      <div class="blog-post-img"><img id="blog-img2" src="" alt="Blog post 2"></div>
+      <h3 class="blog-post-title" data-i18n="blog2_title">Discovering Alajuela: Recommendations from a local host</h3>
+      <span class="blog-post-cat" data-i18n="blog2_cat">ALAJUELA</span>
+      <p class="blog-post-excerpt" data-i18n="blog2_excerpt">I am the proud owner of 360 Café, located in Turrialba de Alajuela, Costa Rica. Over the years, I have had the privilege of welcoming both local residents and tourists from around the world.</p>
+      <a class="blog-read-more" onclick="toast(t('toast_blog'))"><span data-i18n="read_more">Read More</span> <i class="fas fa-arrow-right" style="font-size:11px"></i></a>
+    </div>
+  </div>
+</div><!-- /blog -->
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer>
+  <div class="footer-links-row">
+    <a onclick="go('home')" data-fpage="home" data-i18n="nav_home">Home</a>
+    <a onclick="go('menu')" data-fpage="menu" data-i18n="nav_menu">Menu</a>
+    <a onclick="go('reservation')" data-fpage="reservation" data-i18n="nav_res">Reservations</a>
+    <a onclick="go('blog')" data-fpage="blog" data-i18n="nav_blog">Blog</a>
+    <a onclick="go('about')" data-fpage="about" data-i18n="nav_about">About us</a>
+    <a onclick="go('contact')" data-fpage="contact" data-i18n="nav_contact">Contact us</a>
+  </div>
+  <div class="footer-center">
+    <div class="footer-logo-wrap">
+      <img class="footer-logo-img" src="../Module 05/360 Cafe SEO logo.png" alt="360 Café" onclick="go('home')" style="cursor:pointer">
+      <div class="footer-socials">
+        <a><i class="fab fa-facebook-f"></i></a>
+        <a><i class="fab fa-instagram"></i></a>
+        <a><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="footer-newsletter">
+      <p data-i18n="foot_nl">Subscribe to our newsletter to stay up to date!</p>
+      <div class="footer-subscribe-row">
+        <input type="email" data-i18n-ph="ph_foot_email" placeholder="Email">
+        <button onclick="toast(t('toast_sub'))" data-i18n="subscribe">Subscribe</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>
+      <div class="footer-hours" data-i18n="foot_hours"><strong>Opening hours:</strong> Open daily 11:00 AM to 9:00 PM</div>
+      <div class="footer-dev">Sitio web desarrollado por <a href="https://github.com/mauzunigacr" style="color:rgba(255,255,255,.6)">mauzunigacr</a></div>
+    </div>
+    <div class="footer-copy">Copyright © 2026 360 Café</div>
+  </div>
+</footer>
+
+<script>
+// ── LANGUAGE / i18n ──────────────────────────────────────────────────
+let curLang = 'en';
+
+const T = {
+en:{
+  nav_home:'Home', nav_menu:'Menu', nav_res:'Reservations', nav_blog:'Blog', nav_about:'About Us', nav_contact:'Contact Us',
+  hero_title:'Welcome to the<br>360 Café family!',
+  hero_sub:"At our restaurant, you\'re more than just a guest — you\'re part of the family. From the moment you step through our doors we invite you to relax, share stories, and savor the comforting food of home-cooked meals made with lots of love.",
+  hero_cta:'Order Now',
+  sec_menu_title:'Explore our Menu', sec_menu_sub:'Discover a wide variety of options for lunch, dinner, and coffee time!', sec_menu_more:'Explore more',
+  hmc_drinks:'Drinks and coffee', hmc_app:'Appetizers', hmc_ent:'Entrées', hmc_ff:'Fast Food', hmc_cr:'Crepes & Waffles', hmc_pas:'Pastries',
+  res_strip_title:'Reservations',
+  res_strip_p:"At our restaurant, you\'re more than just a guest — you\'re part of the family. From the moment you step through our doors we invite you to relax, share stories, and savor the comforting food of home-cooked meals made with love.",
+  res_strip_cta:'Book a table',
+  cart_count:n=>n===1?'1 item in cart':`${n} items in cart`,
+  cart_empty:'No products in the cart.', subtotal:'Subtotal', total:'Total',
+  cs_view:'View Cart', cs_checkout:'Checkout',
+  bc_home:'Home',
+  pd_size:'Size', pd_instructions:'Special instructions', pd_instructions_ph:'Add a note…', pd_add:'Add to cart',
+  pd_sku:'SKU:', pd_cat_lbl:'Categories:', pd_tag:'Tag:',
+  pd_tab1:'Description', pd_tab2:'Additional information', pd_related:'Related products', pd_select:'Select options',
+  cart_title:'Cart', th_product:'Product', th_price:'Price', th_qty:'Quantity',
+  cart_update:'Update cart', ct_title:'Cart totals', shipping:'Shipping',
+  ct_ship_opts:'• Express Service<br>• Pickup', ct_proceed:'Proceed to checkout',
+  co_title:'Checkout', co_billing:'Billing details',
+  lbl_fn:'First name *', lbl_ln:'Last name *', lbl_country:'Country / Region *',
+  lbl_street:'Street address *', ph_street:'House number and street name',
+  lbl_city:'Town / City *', lbl_prov:'Province *', lbl_zip:'Postcode / ZIP *',
+  lbl_phone:'Phone *', lbl_email:'Email address *', lbl_acc:'Create an account?',
+  lbl_ship_alt:'Ship to a different address?', ph_alt_addr:'Address',
+  lbl_notes:'Order notes (optional)', ph_notes:'Notes about your order, e.g. special notes for delivery.',
+  co_your_order:'Your order', co_shipment:'Shipment', co_pickup:'Pick up order',
+  co_location:'Location', co_find_loc:'Find Location',
+  sinpe_title:'Payment by SINPE Mobile',
+  sinpe_html:'<strong>Step #1</strong> Confirm your order through the website.<br><strong>Step #2</strong> Make the full payment to SINPE Mobile number <strong>8066-7522</strong> in the name of <em>Julio César Zúñiga Arroyo</em>. Include your order number in the SINPE details.<br><strong>Step #3</strong> Send the SINPE receipt to the same number.',
+  sinpe_note:'<strong>NOTE:</strong> If the payment receipt is not sent to the number described, the order will not be processed. Thank you.',
+  privacy:'Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <a href="#">privacy policy</a>.',
+  place_order:'Place order',
+  conf_tagline:'Your food is in the kitchen.', conf_title:'Order confirmation',
+  conf_num_lbl:'Order number', conf_date_lbl:'Date', conf_pay_lbl:'Payment method',
+  conf_details:'Order details', back_home:'Back to home',
+  conf_thanks:'Thank you!', conf_order_prefix:'Order #',
+  about_h:'About us', story_title:'Our history',
+  story_p1:"360 Café was born from a deep love for good coffee and authentic Costa Rican cuisine. We opened our doors in 2021 in the heart of Turrialba, welcoming neighbors, families, and travelers from around the world.",
+  story_p2:"Every item on our menu is made with locally sourced ingredients, prepared with care and served with warmth. We believe that a great meal is about more than food — it\'s about connection.",
+  story_p3:"Our team is passionate, our space is welcoming, and our coffee is always fresh. We can\'t wait to share our table with you.",
+  our_menu:'Our Menu', gallery_h:'Gallery', reviews_h:'Reviews', faq_h:'FAQ',
+  rev1:'"Absolutely the best café in Turrialba. The matcha latte is unlike anything I\'ve had in Costa Rica — smooth, earthy, and perfectly balanced. The atmosphere is cozy and the staff are so welcoming."',
+  rev2:'"We stopped here after a day at Volcán Turrialba and it was the perfect end to the trip. The crêpes were incredible — especially the banana and almond one. Will definitely come back."',
+  rev3:'"Great place to work remotely. Good WiFi, excellent coffee, friendly people. Prices are very reasonable for the quality. The fast food options are also surprisingly good."',
+  faq_q1:'Do you accept walk-ins or only reservations?', faq_a1:'We welcome walk-ins every day! Reservations are recommended for groups of 5 or more, especially on weekends. Book a table through our website anytime.',
+  faq_q2:'Are there vegetarian or vegan options?', faq_a2:'Yes! Many of our dishes are vegetarian, and we offer almond, oat, and lactose-free milk for all coffee drinks. Ask your server for today\'s plant-based options.',
+  faq_q3:'Can I order online for pickup or delivery?', faq_a3:'Absolutely. Use our online menu to place an order, then choose between café pickup or local delivery at checkout. Your order will be ready when you arrive.',
+  faq_q4:'Is there free WiFi available?', faq_a4:'Yes — free high-speed WiFi is available for all guests throughout the café. Ask your server for the password when you sit down.',
+  faq_q5:'What payment methods do you accept?', faq_a5:'We accept cash, SINPE Mobile, Visa, Mastercard, and American Express for all in-store and online orders.',
+  contact_h:'Contact us', contact_title:"Let\'s start a conversation",
+  contact_addr:'North side Catholic Church of Turrialba,<br>Alajuela, Costa Rica',
+  contact_hours:'Opening hours: Open daily 11:00 AM to 9:00 PM',
+  form_title:'Send us a message', ph_name:'Name *', ph_lname:'Last name *', ph_email:'Email *', ph_phone:'Phone', ph_msg:'Message *', send_btn:'Send',
+  loc_title:'Our location',
+  work_title:'Work with us!', work_p:'Are you interested in joining our team? We are always looking for motivated people who are passionate about gastronomy and customer service. Apply, here is your form.',
+  lbl_wname:'Name', lbl_wlname:'Last Name', lbl_wpos:'Select the position you would like to apply to', lbl_wcontact:'Contact number', lbl_wmsg:'Message',
+  ph_tell:'Tell us about yourself…', file_drop:'Drag & Drop or <strong style="color:var(--red)">Choose Files</strong>', file_sub:'Attach your CV or cover letter', submit_btn:'Submit',
+  res_form_title:'Make your reservations here', res_form_sub:'Fill out this form to make your reservations for special events or any activity.',
+  lbl_rname:'Name', lbl_rcontact:'Contact number', lbl_remail:'Email',
+  lbl_rdate:'Reservation date', lbl_rtime:'Reservation time', lbl_rpeople:'Number of people',
+  lbl_rmsg:'Message', ph_rname:'Your name', ph_rmsg:'Tell us about your event or any special requirements…', res_send:'Send',
+  blog_h:'Our Blog',
+  blog1_title:'Barista Secrets: How to Make the Perfect Milkshake at 360 Café', blog1_cat:'MILKSHAKE',
+  blog1_excerpt:"Hello! I\'m the barista at 360 Café, here in Alajuela, and today I want to share with you some of my secrets for making a fruit smoothie. Smoothies are almost as popular as freshly brewed coffee at our café. And believe me […]",
+  blog2_title:'Discovering Alajuela: Recommendations from a local host', blog2_cat:'ALAJUELA',
+  blog2_excerpt:"I am the proud owner of 360 Café, located in Turrialba de Alajuela, Costa Rica. Over the years, I have had the privilege of welcoming both local residents and tourists from around the world to my restaurant. Many come looking for authentic Costa Rican coffee, others for a good home-cooked meal, but […]",
+  read_more:'Read More',
+  foot_nl:'Subscribe to our newsletter to stay up to date!', ph_foot_email:'Email', subscribe:'Subscribe',
+  foot_hours:'<strong>Opening hours:</strong> Open daily 11:00 AM to 9:00 PM',
+  toast_cart_update:'Cart updated ✓', toast_msg_sent:"Message sent! We\'ll get back to you soon ✓",
+  toast_location:'Location picker available in live build', toast_file:'File upload available in live build',
+  toast_apply:"Application submitted! We\'ll be in touch ✓", toast_res:'Reservation confirmed! Check your email ✓',
+  toast_blog:'Full post available in live build', toast_sub:'Subscribed! ✓',
+  toast_added:n=>`${n} added to cart ✓`,
+  menu_back:'Main menu', cat_drinks:'Drinks', cat_appetizers:'Appetizers', cat_salads:'Salads',
+  cat_sandwiches:'Sandwiches', cat_crepes:'Crepes', cat_waffles:'Waffles', cat_fastfood:'Fast food',
+  cat_entrees:'Entrées', cat_kids:"Kid\'s menu", cat_pastries:'Sweet Snacks',
+  st_hot_cof:'Hot Coffees', st_hot_drk:'Hot Drinks', st_cold_cof:'Cold Coffees', st_cold_drk:'Cold Drinks',
+  st_snacks:'Snacks', st_fries:'Fries', st_ceviches:'Ceviches',
+  st_classic:'Classic', st_specials:'Specials', st_warm:'Warm', st_cold:'Cold',
+  st_sweet:'Sweet', st_savory:'Savory', st_specialty:'Specialty',
+  st_burgers:'Burgers', st_wraps:'Wraps', st_sides:'Sides',
+  st_mains:'Mains', st_drinks_kids:'Drinks',
+  st_pastries:'Pastries', st_cakes:'Cakes', st_cookies:'Cookies',
+},
+es:{
+  nav_home:'Inicio', nav_menu:'Menú', nav_res:'Reservaciones', nav_blog:'Blog', nav_about:'Nosotros', nav_contact:'Contáctenos',
+  hero_title:'¡Bienvenido a la<br>familia 360 Café!',
+  hero_sub:'En nuestro restaurante, eres más que un cliente — eres parte de la familia. Desde el momento en que cruzas nuestras puertas, te invitamos a relajarte, compartir historias y saborear la comodidad de las comidas caseras hechas con mucho amor.',
+  hero_cta:'Pedir Ahora',
+  sec_menu_title:'Explora nuestro Menú', sec_menu_sub:'¡Descubre una gran variedad de opciones para el almuerzo, la cena y la hora del café!', sec_menu_more:'Ver más',
+  hmc_drinks:'Bebidas y café', hmc_app:'Entradas', hmc_ent:'Platos fuertes', hmc_ff:'Comida rápida', hmc_cr:'Crepas y waffles', hmc_pas:'Postres',
+  res_strip_title:'Reservaciones',
+  res_strip_p:'En nuestro restaurante, eres más que un cliente — eres parte de la familia. Desde el momento en que cruzas nuestras puertas, te invitamos a relajarte, compartir historias y disfrutar de comidas caseras hechas con amor.',
+  res_strip_cta:'Reservar una mesa',
+  cart_count:n=>n===1?'1 producto en el carrito':`${n} productos en el carrito`,
+  cart_empty:'No hay productos en el carrito.', subtotal:'Subtotal', total:'Total',
+  cs_view:'Ver Carrito', cs_checkout:'Pagar',
+  bc_home:'Inicio',
+  pd_size:'Tamaño', pd_instructions:'Instrucciones especiales', pd_instructions_ph:'Agregar una nota…', pd_add:'Agregar al carrito',
+  pd_sku:'SKU:', pd_cat_lbl:'Categorías:', pd_tag:'Etiqueta:',
+  pd_tab1:'Descripción', pd_tab2:'Información adicional', pd_related:'Productos relacionados', pd_select:'Seleccionar opciones',
+  cart_title:'Carrito', th_product:'Producto', th_price:'Precio', th_qty:'Cantidad',
+  cart_update:'Actualizar carrito', ct_title:'Totales del carrito', shipping:'Envío',
+  ct_ship_opts:'• Servicio express<br>• Recoger en tienda', ct_proceed:'Proceder al pago',
+  co_title:'Pago', co_billing:'Datos de facturación',
+  lbl_fn:'Nombre *', lbl_ln:'Apellido *', lbl_country:'País / Región *',
+  lbl_street:'Dirección *', ph_street:'Número de casa y nombre de la calle',
+  lbl_city:'Ciudad *', lbl_prov:'Provincia *', lbl_zip:'Código postal *',
+  lbl_phone:'Teléfono *', lbl_email:'Correo electrónico *', lbl_acc:'¿Crear una cuenta?',
+  lbl_ship_alt:'¿Enviar a una dirección diferente?', ph_alt_addr:'Dirección',
+  lbl_notes:'Notas del pedido (opcional)', ph_notes:'Notas sobre su pedido, por ejemplo, notas especiales para la entrega.',
+  co_your_order:'Tu pedido', co_shipment:'Envío', co_pickup:'Recoger pedido',
+  co_location:'Ubicación', co_find_loc:'Encontrar ubicación',
+  sinpe_title:'Pago por SINPE Móvil',
+  sinpe_html:'<strong>Paso #1</strong> Confirma tu pedido a través del sitio web.<br><strong>Paso #2</strong> Realiza el pago completo al número de SINPE Móvil <strong>8066-7522</strong> a nombre de <em>Julio César Zúñiga Arroyo</em>. Incluye el número de tu pedido en los detalles del SINPE.<br><strong>Paso #3</strong> Envía el comprobante del SINPE al mismo número.',
+  sinpe_note:'<strong>NOTA:</strong> Si el comprobante de pago no es enviado al número indicado, el pedido no será procesado. Gracias.',
+  privacy:'Sus datos personales se utilizarán para procesar su pedido y para otros propósitos descritos en nuestra <a href="#">política de privacidad</a>.',
+  place_order:'Realizar pedido',
+  conf_tagline:'Tu comida está en la cocina.', conf_title:'Confirmación del pedido',
+  conf_num_lbl:'Número de pedido', conf_date_lbl:'Fecha', conf_pay_lbl:'Método de pago',
+  conf_details:'Detalles del pedido', back_home:'Volver al inicio',
+  conf_thanks:'¡Muchas gracias!', conf_order_prefix:'Orden #',
+  about_h:'Nosotros', story_title:'Nuestra historia',
+  story_p1:'360 Café nació de un profundo amor por el buen café y la cocina auténtica costarricense. Abrimos nuestras puertas en 2021 en el corazón de Turrialba, dando la bienvenida a vecinos, familias y viajeros de todo el mundo.',
+  story_p2:'Cada platillo de nuestro menú se elabora con ingredientes de origen local, preparados con esmero y servidos con calidez. Creemos que una gran comida es más que comida — es conexión.',
+  story_p3:'Nuestro equipo es apasionado, nuestro espacio es acogedor y nuestro café siempre está fresco. Esperamos compartir nuestra mesa contigo.',
+  our_menu:'Nuestro Menú', gallery_h:'Galería', reviews_h:'Reseñas', faq_h:'Preguntas frecuentes',
+  rev1:'"Absolutamente el mejor café en Turrialba. El matcha latte es como ningún otro que haya probado en Costa Rica — suave, terroso y perfectamente equilibrado. El ambiente es acogedor y el personal muy amable."',
+  rev2:'"Nos detuvimos aquí después de un día en el Volcán Turrialba y fue el final perfecto del viaje. Las crepas fueron increíbles — especialmente la de banano y almendras. Definitivamente volveremos."',
+  rev3:'"Gran lugar para trabajar de forma remota. Buen WiFi, excelente café, gente amigable. Los precios son muy razonables para la calidad. Las opciones de comida rápida también son sorprendentemente buenas."',
+  faq_q1:'¿Aceptan visitas sin reservación o solo con cita?', faq_a1:'¡Damos la bienvenida todos los días sin cita previa! Se recomienda reservar para grupos de 5 o más personas, especialmente los fines de semana.',
+  faq_q2:'¿Hay opciones vegetarianas o veganas?', faq_a2:'¡Sí! Muchos de nuestros platos son vegetarianos y ofrecemos leche de almendras, avena y sin lactosa para todas las bebidas de café.',
+  faq_q3:'¿Puedo hacer pedidos en línea para recoger o entrega?', faq_a3:'Por supuesto. Usa nuestro menú en línea para hacer un pedido, luego elige entre recoger en el café o entrega local al momento de pagar.',
+  faq_q4:'¿Hay WiFi gratuito disponible?', faq_a4:'Sí — WiFi de alta velocidad gratuito para todos los clientes en todo el café. Pregunta la contraseña a tu mesero.',
+  faq_q5:'¿Qué métodos de pago aceptan?', faq_a5:'Aceptamos efectivo, SINPE Móvil, Visa, Mastercard y American Express para todos los pedidos.',
+  contact_h:'Contáctenos', contact_title:'Iniciemos una conversación',
+  contact_addr:'Costado norte Iglesia Católica de Turrialba,<br>Alajuela, Costa Rica',
+  contact_hours:'Horario: Abierto todos los días de 11:00 AM a 9:00 PM',
+  form_title:'Envíanos un mensaje', ph_name:'Nombre *', ph_lname:'Apellido *', ph_email:'Correo *', ph_phone:'Teléfono', ph_msg:'Mensaje *', send_btn:'Enviar',
+  loc_title:'Nuestra ubicación',
+  work_title:'¡Trabaja con nosotros!', work_p:'¿Estás interesado en unirte a nuestro equipo? Siempre estamos buscando personas motivadas y apasionadas por la gastronomía y el servicio al cliente. Aplica aquí.',
+  lbl_wname:'Nombre', lbl_wlname:'Apellido', lbl_wpos:'Selecciona el puesto al que deseas aplicar', lbl_wcontact:'Número de contacto', lbl_wmsg:'Mensaje',
+  ph_tell:'Cuéntanos sobre ti…', file_drop:'Arrastra y suelta o <strong style="color:var(--red)">Elige archivos</strong>', file_sub:'Adjunta tu CV o carta de presentación', submit_btn:'Enviar',
+  res_form_title:'Haz tus reservaciones aquí', res_form_sub:'Completa este formulario para hacer tus reservaciones para eventos especiales o cualquier actividad.',
+  lbl_rname:'Nombre', lbl_rcontact:'Número de contacto', lbl_remail:'Correo',
+  lbl_rdate:'Fecha de la reservación', lbl_rtime:'Hora de la reservación', lbl_rpeople:'Número de personas',
+  lbl_rmsg:'Mensaje', ph_rname:'Tu nombre', ph_rmsg:'Cuéntanos sobre tu evento o requerimientos especiales…', res_send:'Enviar',
+  blog_h:'Nuestro Blog',
+  blog1_title:'Secretos de barista: Cómo hacer el smoothie perfecto en 360 Café', blog1_cat:'MILKSHAKE',
+  blog1_excerpt:'¡Hola! Soy el barista del 360 Café, aquí en Alajuela, y hoy quiero compartir contigo algunos de mis secretos para hacer un smoothie de frutas. Los smoothies son casi tan populares como el café recién preparado en nuestro café. Y créeme […]',
+  blog2_title:'Descubriendo Alajuela: Recomendaciones de un anfitrión local', blog2_cat:'ALAJUELA',
+  blog2_excerpt:'Soy el orgulloso propietario del 360 Café, ubicado en Turrialba de Alajuela, Costa Rica. A lo largo de los años, he tenido el privilegio de recibir tanto a residentes locales como a turistas de todo el mundo en mi restaurante. Muchos vienen buscando café costarricense auténtico, otros una buena comida casera, pero […]',
+  read_more:'Leer más',
+  foot_nl:'¡Suscríbete a nuestro boletín para mantenerte al día!', ph_foot_email:'Correo', subscribe:'Suscribirse',
+  foot_hours:'<strong>Horario:</strong> Abierto todos los días de 11:00 AM a 9:00 PM',
+  toast_cart_update:'Carrito actualizado ✓', toast_msg_sent:'¡Mensaje enviado! Nos pondremos en contacto pronto ✓',
+  toast_location:'Selector de ubicación disponible en la versión final', toast_file:'Carga de archivos disponible en la versión final',
+  toast_apply:'¡Solicitud enviada! Nos pondremos en contacto ✓', toast_res:'¡Reservación confirmada! Revisa tu correo ✓',
+  toast_blog:'Publicación completa disponible en la versión final', toast_sub:'¡Suscrito! ✓',
+  toast_added:n=>`${n} agregado al carrito ✓`,
+  menu_back:'Menú principal', cat_drinks:'Bebidas', cat_appetizers:'Entradas', cat_salads:'Ensaladas',
+  cat_sandwiches:'Sándwiches', cat_crepes:'Crepas', cat_waffles:'Waffles', cat_fastfood:'Comida rápida',
+  cat_entrees:'Platos fuertes', cat_kids:'Menú infantil', cat_pastries:'Postres',
+  st_hot_cof:'Cafés calientes', st_hot_drk:'Bebidas calientes', st_cold_cof:'Cafés fríos', st_cold_drk:'Bebidas frías',
+  st_snacks:'Aperitivos', st_fries:'Papas fritas', st_ceviches:'Ceviches',
+  st_classic:'Clásico', st_specials:'Especiales', st_warm:'Caliente', st_cold:'Frío',
+  st_sweet:'Dulces', st_savory:'Saladas', st_specialty:'Especialidad',
+  st_burgers:'Hamburguesas', st_wraps:'Wraps', st_sides:'Acompañantes',
+  st_mains:'Platos principales', st_drinks_kids:'Bebidas',
+  st_pastries:'Pasteles', st_cakes:'Tortas', st_cookies:'Galletas',
+},
+};
+
+function t(k){const v=T[curLang][k];return v!==undefined?v:(T.en[k]||k);}
+function tFn(k,...a){const fn=T[curLang][k];return typeof fn==='function'?fn(...a):(typeof T.en[k]==='function'?T.en[k](...a):k);}
+
+function toggleLang(){setLang(curLang==='en'?'es':'en');}
+
+function setLang(lang){
+  curLang=lang;
+  document.getElementById('lang-flag').textContent=lang==='en'?'🇪🇸':'🇬🇧';
+  document.getElementById('lang-label').textContent=lang==='en'?'ES':'EN';
+  document.documentElement.lang=lang;
+  applyTranslations();
+}
+
+function applyTranslations(){
+  // Static data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const v=T[curLang][el.dataset.i18n];
+    if(v!==undefined && typeof v==='string') el.innerHTML=v;
+  });
+  // Placeholder attributes
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const v=T[curLang][el.dataset.i18nPh];
+    if(v!==undefined) el.placeholder=v;
+  });
+  // Cart shipping options in cart page
+  const shipOpts=document.getElementById('ct-ship-opts');
+  if(shipOpts) shipOpts.innerHTML=t('ct_ship_opts');
+  // Checkout dynamic blocks
+  const sinpeBox=document.getElementById('sinpe-box');
+  if(sinpeBox) sinpeBox.innerHTML=t('sinpe_html');
+  const sinpeNote=document.getElementById('sinpe-note');
+  if(sinpeNote) sinpeNote.innerHTML=t('sinpe_note');
+  const privacyTxt=document.getElementById('privacy-txt');
+  if(privacyTxt) privacyTxt.innerHTML=t('privacy');
+  // Footer hours (has innerHTML with <strong>)
+  const fh=document.querySelector('.footer-hours');
+  if(fh) fh.innerHTML=t('foot_hours');
+  // Re-render dynamic pages
+  updateCartUI();
+  const mp=document.getElementById('menu-all-content');
+  if(mp && mp.hasChildNodes()){
+    document.getElementById('menu-pills').innerHTML='';
+    mp.innerHTML='';
+    renderAllMenu();
+  }
+  const cp=document.getElementById('page-cart');
+  if(cp && cp.classList.contains('active')) renderCart();
+  const cop=document.getElementById('page-checkout');
+  if(cop && cop.classList.contains('active')) renderCheckout();
+}
+
+// ── IMAGE PATHS ────────────────────────────────────────────────────
+const ROOT = '../';
+const I = {
+  hero:   ROOT+'Content website/1. Homepage/DSC_0239.JPG',
+  hero2:  ROOT+'Content website/1. Homepage/DSC_0306.JPG',
+  hero3:  ROOT+'Content website/1. Homepage/DSC_0367.JPG',
+  cafe:   ROOT+'Content website/1. Homepage/Cafeteria photo.jpg',
+  ms1:    ROOT+'Content website/1. Homepage/Menu section/DSC_0437.JPG',
+  ms2:    ROOT+'Content website/1. Homepage/Menu section/DSC_0207.JPG',
+  ms3:    ROOT+'Content website/1. Homepage/Menu section/DSC_0123.JPG',
+  ms4:    ROOT+'Content website/1. Homepage/Menu section/DSC_0208.JPG',
+  ms5:    ROOT+'Content website/1. Homepage/Menu section/DSC_0350.JPG',
+  about:  ROOT+'Content website/5.About us./DSC_0212.JPG',
+  contact:ROOT+'Content website/6.Contact us./DSC_0266.JPG',
+  am:     ROOT+'Module 06/Bebidas/Americano.jpg',
+  aml:    ROOT+'Module 06/Bebidas/Americano-con-leche.jpg',
+  am1:    ROOT+'Module 06/Bebidas/Americano1.jpg',
+  cap:    ROOT+'Module 06/Bebidas/Cappu-americano.jpg',
+  moc:    ROOT+'Module 06/Bebidas/Mocaccino.jpg',
+  crCar:  ROOT+'Module 06/Crepes photos/Caramel-Strawberries-crepe.jpg',
+  crFr:   ROOT+'Module 06/Crepes photos/Frutos-rojos.jpg',
+  crOr:   ROOT+'Module 06/Crepes photos/Galletas-oreo-crepe.jpg',
+  crKi:   ROOT+'Module 06/Crepes photos/Kiwi-Strawberries-crepe.jpg',
+  crBa:   ROOT+'Module 06/Crepes photos/banano-y-almendras.jpg',
+  ff1:    ROOT+'Content website/2. Menu/Fast food/DSC_0103.JPG',
+  ff2:    ROOT+'Content website/2. Menu/Fast food/DSC_0294.JPG',
+  sw1:    ROOT+'Content website/2. Menu/Sandwiches/DSC_0251.JPG',
+  sw2:    ROOT+'Content website/2. Menu/Sandwiches/DSC_0259.JPG',
+  pas:    ROOT+'Content website/2. Menu/Pastelería/DSC_0367.JPG',
+  crDl1:  ROOT+'Content website/2. Menu/Crepas Dulces/DSC_0311.JPG',
+  crDl2:  ROOT+'Content website/2. Menu/Crepas Dulces/DSC_0337.JPG',
+  crDl3:  ROOT+'Content website/2. Menu/Crepas Dulces/DSC_0340.JPG',
+  blog1:  ROOT+'Content website/1. Homepage/DSC_0239.JPG',
+  blog2:  ROOT+'Content website/1. Homepage/DSC_0306.JPG',
+};
+
+// ── MENU DATA (bilingual) ──────────────────────────────────────────
+const CATS = [
+  {id:'drinks', lk:'cat_drinks',
+    stabs:{en:['Hot Coffees','Hot Drinks','Cold Coffees','Cold Drinks'],
+            es:['Cafés calientes','Bebidas calientes','Cafés fríos','Bebidas frías']},
+    items:[
+      {id:1,  name:'Americano',           price:[1500,2500], img:I.am,   desc:{en:'Rich espresso diluted with hot water. Clean, bold, classic.',es:'Espresso concentrado diluido con agua caliente. Limpio, intenso y clásico.'}},
+      {id:2,  name:'Americano con Leche', price:[1500,2500], img:I.aml,  desc:{en:'Espresso rounded with warm steamed milk.',es:'Espresso suavizado con leche caliente al vapor.'}},
+      {id:3,  name:'Cappuccino',          price:[1500,2500], img:I.cap,  desc:{en:'Balanced espresso topped with velvety milk foam.',es:'Espresso equilibrado con espuma de leche aterciopelada.'}},
+      {id:4,  name:'Mocaccino',           price:[1500,2500], img:I.moc,  desc:{en:'Espresso meets chocolate in this indulgent classic.',es:'El espresso se encuentra con el chocolate en este clásico indulgente.'}},
+      {id:5,  name:'Latte',               price:[1500,2500], img:I.am1,  desc:{en:'Silky steamed milk poured over a double espresso shot.',es:'Leche al vapor sedosa vertida sobre un doble espresso.'}},
+      {id:6,  name:'Matcha Latte',        price:[1500,2500], img:I.am1,  desc:{en:'Ceremonial-grade matcha with your choice of milk.',es:'Matcha de grado ceremonial con la leche de tu elección.'}},
+    ]},
+  {id:'appetizers', lk:'cat_appetizers',
+    stabs:{en:['Snacks','Fries','Ceviches'],es:['Aperitivos','Papas fritas','Ceviches']},
+    items:[
+      {id:24, name:'Cheese Board',  price:[3500,5000], img:I.ms2, desc:{en:'Selection of artisan cheeses with fruit and crackers.',es:'Selección de quesos artesanales con fruta y galletas.'}},
+      {id:25, name:'Bruschetta',    price:[2500,4000], img:I.ms3, desc:{en:'Toasted sourdough with fresh tomato, basil, and olive oil.',es:'Pan tostado con tomate fresco, albahaca y aceite de oliva.'}},
+      {id:26, name:'Chicken Wings', price:[3000,4500], img:I.ms4, desc:{en:'Crispy wings with your choice of dipping sauce.',es:'Alitas crujientes con tu salsa favorita.'}},
+      {id:27, name:'Garden Salad',  price:[2500,3500], img:I.ms5, desc:{en:'Mixed greens with cherry tomatoes, cucumber, and vinaigrette.',es:'Mezcla de lechugas con tomate cherry, pepino y vinagreta.'}},
+    ]},
+  {id:'salads', lk:'cat_salads',
+    stabs:{en:['Classic','Specials'],es:['Clásico','Especiales']},
+    items:[
+      {id:30, name:'Caesar Salad', price:[2500,3500], img:I.ms5, desc:{en:'Crisp romaine, parmesan, croutons, and house Caesar dressing.',es:'Romana crujiente, parmesano, crutones y aderezo Caesar de la casa.'}},
+      {id:31, name:'Greek Salad',  price:[2500,3500], img:I.ms2, desc:{en:'Tomatoes, cucumber, olives, and feta cheese with olive oil.',es:'Tomates, pepino, aceitunas y queso feta con aceite de oliva.'}},
+    ]},
+  {id:'sandwiches', lk:'cat_sandwiches',
+    stabs:{en:['Warm','Cold'],es:['Caliente','Frío']},
+    items:[
+      {id:16, name:'Club Sandwich',  price:[2500,4000], img:I.sw1, desc:{en:'Triple-layer with turkey, bacon, lettuce, tomato, and mayo.',es:'Triple capa con pavo, tocino, lechuga, tomate y mayonesa.'}},
+      {id:17, name:'Grilled Veggie', price:[2000,3500], img:I.sw2, desc:{en:'Seasonal roasted vegetables with basil pesto on sourdough.',es:'Vegetales de temporada asados con pesto de albahaca en pan sourdough.'}},
+      {id:18, name:'Ham & Cheese',   price:[2000,3500], img:I.sw1, desc:{en:'Classic ham and melted cheese on toasted ciabatta.',es:'Jamón y queso derretido en ciabatta tostado.'}},
+      {id:19, name:'Tuna Melt',      price:[2000,3500], img:I.sw2, desc:{en:'Seasoned tuna with Swiss cheese, grilled until golden.',es:'Atún condimentado con queso suizo, gratinado hasta dorar.'}},
+    ]},
+  {id:'crepes', lk:'cat_crepes',
+    stabs:{en:['Sweet','Savory'],es:['Dulces','Saladas']},
+    items:[
+      {id:7,  name:'Caramel & Strawberry', price:[2000,3500], img:I.crCar, desc:{en:'Golden crêpe with caramel and fresh strawberries.',es:'Crepa dorada con caramelo y fresas frescas.'}},
+      {id:8,  name:'Red Fruits',           price:[2000,3500], img:I.crFr,  desc:{en:'Seasonal red berries with light vanilla cream.',es:'Frutos rojos de temporada con crema ligera de vainilla.'}},
+      {id:9,  name:'Oreo',                 price:[2000,3500], img:I.crOr,  desc:{en:'Crushed Oreo crumble with chocolate spread.',es:'Galleta Oreo triturada con crema de chocolate.'}},
+      {id:10, name:'Kiwi & Strawberry',    price:[2000,3500], img:I.crKi,  desc:{en:'Fresh kiwi and strawberries with honey drizzle.',es:'Kiwi fresco y fresas con miel.'}},
+      {id:11, name:'Banana & Almonds',     price:[2000,3500], img:I.crBa,  desc:{en:'Warm banana with toasted almonds and cinnamon.',es:'Banano caliente con almendras tostadas y canela.'}},
+    ]},
+  {id:'waffles', lk:'cat_waffles',
+    stabs:{en:['Classic','Specialty'],es:['Clásico','Especialidad']},
+    items:[
+      {id:40, name:'Classic Waffle',   price:[2500,4000], img:I.crDl1, desc:{en:'Belgian waffle with syrup and fresh whipped cream.',es:'Waffle belga con jarabe y crema batida fresca.'}},
+      {id:41, name:'Chocolate Waffle', price:[2500,4000], img:I.crDl2, desc:{en:'Rich chocolate waffle with dark chocolate drizzle.',es:'Waffle de chocolate con cobertura de chocolate negro.'}},
+      {id:42, name:'Fruit Waffle',     price:[2500,4000], img:I.crDl3, desc:{en:'Waffle topped with seasonal fresh fruits.',es:'Waffle con frutas frescas de temporada.'}},
+    ]},
+  {id:'fastfood', lk:'cat_fastfood',
+    stabs:{en:['Burgers','Wraps','Sides'],es:['Hamburguesas','Wraps','Acompañantes']},
+    items:[
+      {id:12, name:'Classic Burger', price:[3000,4500], img:I.ff1, desc:{en:'Beef patty with lettuce, tomato, and house sauce.',es:'Carne de res con lechuga, tomate y salsa de la casa.'}},
+      {id:13, name:'Crispy Chicken', price:[3000,4500], img:I.ff2, desc:{en:'Golden fried chicken fillet with coleslaw and sriracha mayo.',es:'Filete de pollo frito dorado con coleslaw y mayo sriracha.'}},
+      {id:14, name:'Veggie Wrap',    price:[2500,4000], img:I.ff1, desc:{en:'Grilled seasonal vegetables with hummus in a flour tortilla.',es:'Vegetales de temporada asados con hummus en tortilla de harina.'}},
+      {id:15, name:'Loaded Fries',   price:[2000,3000], img:I.ff2, desc:{en:'Crispy fries with cheese sauce, jalapeños, and sour cream.',es:'Papas crujientes con salsa de queso, jalapeños y crema agria.'}},
+    ]},
+  {id:'entrees', lk:'cat_entrees',
+    stabs:{en:['Mains','Specials'],es:['Platos principales','Especiales']},
+    items:[
+      {id:28, name:'Grilled Chicken', price:[4500,7000], img:I.ff1, desc:{en:'Herb-marinated grilled chicken breast with seasonal sides.',es:'Pechuga de pollo marinada en hierbas con acompañantes de temporada.'}},
+      {id:29, name:'Pasta Carbonara', price:[4000,6500], img:I.ms1, desc:{en:'Spaghetti with crispy pancetta, egg yolk, and Parmesan.',es:'Espagueti con panceta crujiente, yema de huevo y parmesano.'}},
+      {id:32, name:'Fish Tacos',      price:[3500,5500], img:I.ff2, desc:{en:'Grilled fish tacos with mango salsa and chipotle cream.',es:'Tacos de pescado asado con salsa de mango y crema chipotle.'}},
+    ]},
+  {id:'kids', lk:'cat_kids',
+    stabs:{en:['Mains','Drinks'],es:['Platos principales','Bebidas']},
+    items:[
+      {id:50, name:'Mini Burger',    price:[2000,3000], img:I.ff1, desc:{en:'Small beef burger with fries and a juice.',es:'Hamburguesa pequeña con papas fritas y jugo.'}},
+      {id:51, name:'Mac & Cheese',   price:[1500,2500], img:I.ms3, desc:{en:'Creamy macaroni and cheese, kids love it.',es:'Macarrones con queso cremoso, ¡a los niños les encanta!'}},
+      {id:52, name:'Chicken Strips', price:[2000,3000], img:I.ff2, desc:{en:'Crispy chicken strips with honey mustard dip.',es:'Tiras de pollo crujiente con salsa de miel y mostaza.'}},
+    ]},
+  {id:'pastries', lk:'cat_pastries',
+    stabs:{en:['Pastries','Cakes','Cookies'],es:['Pasteles','Tortas','Galletas']},
+    items:[
+      {id:20, name:'Pastry of the Day', price:[1500,2500], img:I.pas, desc:{en:'Ask your server — baked fresh every morning.',es:'Pregunta a tu mesero — horneado fresco cada mañana.'}},
+      {id:21, name:'Butter Croissant', price:[1000,2000], img:I.pas, desc:{en:'Classic French croissant — flaky, buttery, perfect.',es:'Clásico croissant francés — hojaldrado, mantecoso, perfecto.'}},
+      {id:22, name:'Chocolate Muffin', price:[1200,2200], img:I.pas, desc:{en:'Rich double-chocolate muffin with dark chocolate chips.',es:'Muffin de doble chocolate con chispas de chocolate negro.'}},
+      {id:23, name:'Cinnamon Roll',    price:[1200,2200], img:I.pas, desc:{en:'Soft roll glazed with cream cheese frosting.',es:'Pan suave glaseado con frosting de queso crema.'}},
+    ]},
+];
+
+function findItem(id){for(const c of CATS)for(const i of c.items)if(i.id===id)return i;return null;}
+function allItems(){const a=[];for(const c of CATS)a.push(...c.items);return a;}
+function findCatLabel(id){for(const c of CATS)for(const i of c.items)if(i.id===id)return t(c.lk);return'';}
+function isDrink(id){for(const c of CATS)for(const i of c.items)if(i.id===id)return c.id==='drinks';return false;}
+
+// ── STATE ─────────────────────────────────────────────────────────
+let cart=[], curProd=null, curQty=1;
+const orderNum=Math.floor(4000+Math.random()*900);
+
+// ── FORMAT ────────────────────────────────────────────────────────
+function fmt(n){return '₡'+n.toLocaleString('es-CR');}
+
+// ── INIT IMAGES ───────────────────────────────────────────────────
+function initImages(){
+  const s=(id,src)=>{const el=document.getElementById(id);if(el)el.src=src;};
+  const bg=(id,src)=>{const el=document.getElementById(id);if(el)el.style.backgroundImage=`url("${src}")`;}; 
+  bg('home-hero', I.hero);
+  bg('home-res-bg', I.cafe);
+  bg('menu-hero-bg', I.ms1);
+  bg('about-hero-bg', I.crCar);
+  bg('contact-hero-bg', I.contact);
+  bg('res-hero-bg', I.hero2);
+  s('story-img', I.about);
+  s('blog-img1', I.hero);
+  s('blog-img2', I.hero3);
+  const mc=[I.cap, I.ms2, I.ms4, I.ff1, I.crCar, I.pas];
+  mc.forEach((src,i)=>s('hmc'+(i+1), src));
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────
+function go(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('page-'+name);
+  if(pg) pg.classList.add('active');
+  document.querySelectorAll('.nav-links a[data-page]').forEach(a=>a.classList.toggle('active',a.dataset.page===name));
+  document.querySelectorAll('.footer-links-row a[data-fpage]').forEach(a=>a.classList.toggle('active',a.dataset.fpage===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Reset nav transparency on each page change
+  document.getElementById('nav').classList.remove('scrolled');
+  if(name==='menu'){
+    document.getElementById('menu-pills').innerHTML='';
+    document.getElementById('menu-all-content').innerHTML='';
+    renderAllMenu();
+  }
+  if(name==='cart') renderCart();
+  if(name==='checkout') renderCheckout();
+}
+
+// ── NAV SCROLL BLEND ──────────────────────────────────────────────
+window.addEventListener('scroll',function(){
+  const nav=document.getElementById('nav');
+  if(window.scrollY>60){ nav.classList.add('scrolled'); }
+  else{ nav.classList.remove('scrolled'); }
+},{ passive:true });
+
+// ── MENU RENDER ───────────────────────────────────────────────────
+function renderAllMenu(){
+  const pillsWrap=document.getElementById('menu-pills');
+  if(pillsWrap && !pillsWrap.hasChildNodes()){
+    CATS.forEach(cat=>{
+      const btn=document.createElement('button');
+      btn.className='menu-pill';
+      btn.textContent=t(cat.lk);
+      btn.onclick=()=>scrollTocat(cat.id);
+      pillsWrap.appendChild(btn);
+    });
+  }
+  const wrap=document.getElementById('menu-all-content');
+  if(wrap.hasChildNodes()) return;
+  CATS.forEach(cat=>{
+    const sec=document.createElement('div');
+    sec.className='menu-cat-section';
+    sec.id='cat-sec-'+cat.id;
+    const heading=document.createElement('h2');
+    heading.className='menu-cat-title';
+    heading.textContent=t(cat.lk);
+    sec.appendChild(heading);
+    if(cat.stabs){
+      const tabs=cat.stabs[curLang]||cat.stabs.en;
+      const tabsRow=document.createElement('div');
+      tabsRow.className='menu-subtabs';
+      tabs.forEach((tab,i)=>{
+        const tEl=document.createElement('span');
+        tEl.className='menu-subtab'+(i===0?' active':'');
+        tEl.textContent=tab;
+        tEl.onclick=()=>{tabsRow.querySelectorAll('.menu-subtab').forEach(x=>x.classList.remove('active'));tEl.classList.add('active');};
+        tabsRow.appendChild(tEl);
+      });
+      sec.appendChild(tabsRow);
+    }
+    const grid=document.createElement('div');
+    grid.className='menu-items-grid';
+    cat.items.forEach(item=>{
+      const desc=typeof item.desc==='object'?(item.desc[curLang]||item.desc.en):item.desc;
+      const d=document.createElement('div');
+      d.className='menu-item-row';
+      d.innerHTML=`
+        <img src="${item.img}" alt="${item.name}" onclick="openProduct(${item.id})">
+        <div class="menu-item-body">
+          <div class="menu-item-header">
+            <span class="menu-item-name" onclick="openProduct(${item.id})">${item.name}</span>
+            <span class="menu-item-dots"></span>
+            <span class="menu-item-price">${cat.id==='drinks'?fmt(item.price[0])+' - '+fmt(item.price[1]):fmt(item.price[1])}</span>
+          </div>
+          <div class="menu-item-desc">${desc}</div>
+        </div>
+        <button class="menu-add-btn" onclick="quickAdd(${item.id})" title="${t('pd_add')}">
+          <i class="fas fa-shopping-bag" style="font-size:13px"></i>
+        </button>`;
+      grid.appendChild(d);
+    });
+    sec.appendChild(grid);
+    const backBtn=document.createElement('button');
+    backBtn.className='menu-back-btn';
+    backBtn.textContent=t('menu_back');
+    backBtn.onclick=()=>document.getElementById('menu-hero-bg').scrollIntoView({behavior:'smooth'});
+    sec.appendChild(backBtn);
+    wrap.appendChild(sec);
+  });
+}
+
+function scrollTocat(catId){
+  setTimeout(()=>{
+    const el=document.getElementById('cat-sec-'+catId);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  },80);
+}
+
+// ── PRODUCT ───────────────────────────────────────────────────────
+function openProduct(id){
+  const item=findItem(id);
+  if(!item) return;
+  curProd=item; curQty=1;
+  const drink=isDrink(id);
+  const desc=typeof item.desc==='object'?(item.desc[curLang]||item.desc.en):item.desc;
+  document.getElementById('pd-img').src=item.img;
+  document.getElementById('pd-name').textContent=item.name;
+  document.getElementById('pd-price-range').textContent=drink?`${fmt(item.price[0])} – ${fmt(item.price[1])}`:fmt(item.price[1]);
+  document.getElementById('pd-desc').textContent=desc;
+  document.getElementById('pd-desc-long').textContent=desc;
+  document.getElementById('pd-qty').textContent='1';
+  const cat=findCatLabel(id);
+  document.getElementById('bc-cat').textContent=cat;
+  document.getElementById('pd-cat-meta').textContent=cat;
+  document.getElementById('bc-name').textContent=item.name;
+  document.getElementById('pd-size-section').style.display=drink?'block':'none';
+  const sel=document.getElementById('pd-size');
+  if(drink) sel.innerHTML=`<option value="${item.price[0]}">8 oz. — ${fmt(item.price[0])}</option><option value="${item.price[1]}" selected>12 oz. — ${fmt(item.price[1])}</option>`;
+  updPdFinal();
+  const rg=document.getElementById('related-grid');
+  rg.innerHTML='';
+  allItems().filter(x=>x.id!==id).slice(0,4).forEach(r=>{
+    const d=document.createElement('div');
+    d.className='related-card';
+    d.onclick=()=>openProduct(r.id);
+    d.innerHTML=`<img src="${r.img}" alt="${r.name}">
+      <div class="related-card-body">
+        <div class="related-card-tag">${findCatLabel(r.id)}</div>
+        <div class="related-card-name">${r.name}</div>
+        <div class="related-card-stars">★★★★★</div>
+        <div class="related-card-price">${fmt(r.price[1])}</div>
+        <button class="add-to-cart-btn" style="width:100%;text-align:center" onclick="event.stopPropagation();quickAdd(${r.id})">${t('pd_select')}</button>
+      </div>`;
+    rg.appendChild(d);
+  });
+  go('product');
+}
+function updPdFinal(){if(!curProd) return;}
+function updatePdTotal(){updPdFinal();}
+function chQty(d){curQty=Math.max(1,curQty+d);document.getElementById('pd-qty').textContent=curQty;}
+function addCurrent(){
+  if(!curProd) return;
+  const drink=isDrink(curProd.id);
+  let price,size;
+  if(drink){
+    const s=document.getElementById('pd-size');
+    price=parseFloat(s.value)||curProd.price[1];
+    size=s.options[s.selectedIndex].text.split('—')[0].trim();
+  }else{price=curProd.price[1];size='';}
+  const instructions=document.getElementById('pd-instructions').value.trim();
+  for(let i=0;i<curQty;i++) cartPush({...curProd,cartId:Date.now()+Math.random(),unitPrice:price,selectedSize:size,instructions});
+  document.getElementById('pd-instructions').value='';
+  toast(tFn('toast_added',curProd.name));
+}
+function quickAdd(id){
+  const item=findItem(id);if(!item)return;
+  const drink=isDrink(id);
+  cartPush({...item,cartId:Date.now()+Math.random(),unitPrice:item.price[1],selectedSize:drink?'12 oz.':''});
+  toast(tFn('toast_added',item.name));
+}
+
+// ── CART ─────────────────────────────────────────────────────────
+function cartPush(item){
+  cart.push(item);updateCartUI();popBadge();
+  const side=document.getElementById('cart-side');
+  if(!side.classList.contains('open')) toggleCart();
+}
+function removeItem(cid){cart=cart.filter(x=>x.cartId!==cid);updateCartUI();renderCart();}
+function cartTotal(){return cart.reduce((s,i)=>s+(i.unitPrice||i.price[1]),0);}
+function updateCartUI(){
+  const count=cart.length;
+  document.getElementById('cart-count').textContent=count;
+  document.getElementById('cs-count-label').textContent=tFn('cart_count',count);
+  const body=document.getElementById('cs-body');
+  const foot=document.getElementById('cs-foot');
+  if(!count){
+    body.innerHTML=`<div class="cs-empty"><i class="fas fa-shopping-bag"></i><br><span>${t('cart_empty')}</span></div>`;
+    foot.style.display='none';return;
+  }
+  foot.style.display='block';
+  body.innerHTML='';
+  cart.forEach(item=>{
+    const d=document.createElement('div');
+    d.className='cs-item';
+    d.innerHTML=`<img src="${item.img}" alt="${item.name}">
+      <div class="cs-item-info">
+        <div class="cs-item-name">${item.name}</div>
+        <div class="cs-item-size">${item.selectedSize||''}</div>
+        <div class="cs-item-row">
+          <div class="cs-qty">
+            <button class="cs-qty-btn">−</button>
+            <span class="cs-qty-num">1</span>
+            <button class="cs-qty-btn">+</button>
+          </div>
+          <span class="cs-item-price">${fmt(item.unitPrice||item.price[1])}</span>
+        </div>
+      </div>
+      <button class="cs-item-del" onclick="removeItem(${item.cartId})"><i class="fas fa-times"></i></button>`;
+    body.appendChild(d);
+  });
+  const tot=cartTotal();
+  document.getElementById('cs-subtotal').textContent=fmt(tot);
+  document.getElementById('cs-total').textContent=fmt(tot);
+}
+function toggleCart(){
+  const s=document.getElementById('cart-side');
+  const o=document.getElementById('cart-overlay');
+  const open=s.classList.toggle('open');
+  o.style.display=open?'block':'none';
+}
+function popBadge(){
+  const b=document.getElementById('cart-count');
+  b.classList.add('pop');setTimeout(()=>b.classList.remove('pop'),280);
+}
+function renderCart(){
+  const tbody=document.getElementById('cart-tbody');
+  if(!tbody)return;
+  tbody.innerHTML='';
+  if(!cart.length){
+    tbody.innerHTML=`<tr><td colspan="5" style="padding:28px;text-align:center;color:#bbb">${t('cart_empty')} <a onclick="go('menu')" style="color:var(--red);cursor:pointer;font-weight:600">${t('sec_menu_more')} →</a></td></tr>`;
+  }else{
+    cart.forEach(item=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td style="padding:14px 16px"><button onclick="removeItem(${item.cartId})" style="background:none;color:#ccc;font-size:16px;cursor:pointer;transition:color .2s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='#ccc'"><i class="fas fa-times-circle"></i></button></td>
+        <td style="padding:14px 16px"><div style="display:flex;align-items:center;gap:12px"><img src="${item.img}" style="width:56px;height:56px;border-radius:8px;object-fit:cover"><div><div style="font-weight:700;font-size:14px">${item.name}</div><div style="font-size:12px;color:#aaa">${item.selectedSize||''}</div></div></div></td>
+        <td style="padding:14px 16px;text-align:center;font-size:14px">${fmt(item.unitPrice||item.price[1])}</td>
+        <td style="padding:14px 16px;text-align:center"><div style="display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #eee;border-radius:8px;padding:4px 10px"><button style="background:none;font-size:16px;color:#555;cursor:pointer">−</button><span style="font-weight:700;min-width:20px;text-align:center">1</span><button style="background:none;font-size:16px;color:#555;cursor:pointer">+</button></div></td>
+        <td style="padding:14px 16px;text-align:right;font-weight:700">${fmt(item.unitPrice||item.price[1])}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  const tot=cartTotal();
+  const sub=document.getElementById('ct-sub');const tot2=document.getElementById('ct-total');
+  if(sub)sub.textContent=fmt(tot);if(tot2)tot2.textContent=fmt(tot);
+}
+function renderCheckout(){
+  const el=document.getElementById('co-items');if(!el)return;
+  el.innerHTML='';
+  cart.forEach(item=>{
+    const row=document.createElement('div');
+    row.className='order-row';
+    row.innerHTML=`<div><div class="order-row-name">${item.name} × 1</div><div class="order-row-meta">${item.selectedSize||''}</div></div><div class="order-row-price">${fmt(item.unitPrice||item.price[1])}</div>`;
+    el.appendChild(row);
+  });
+  const tot=cartTotal();
+  const sub=document.getElementById('co-sub');const tot2=document.getElementById('co-total');
+  if(sub)sub.textContent=fmt(tot);if(tot2)tot2.textContent=fmt(tot);
+  // Fill dynamic SINPE blocks
+  const sinpeBox=document.getElementById('sinpe-box');if(sinpeBox)sinpeBox.innerHTML=t('sinpe_html');
+  const sinpeNote=document.getElementById('sinpe-note');if(sinpeNote)sinpeNote.innerHTML=t('sinpe_note');
+  const privacyTxt=document.getElementById('privacy-txt');if(privacyTxt)privacyTxt.innerHTML=t('privacy');
+}
+function placeOrder(){
+  const tot=cartTotal();
+  document.getElementById('conf-order-num').textContent=t('conf_order_prefix')+orderNum;
+  document.getElementById('conf-thanks').textContent=t('conf_thanks');
+  document.getElementById('conf-num').textContent=orderNum;
+  const today=new Date();
+  document.getElementById('conf-date').textContent=today.getDate().toString().padStart(2,'0')+'/'+(today.getMonth()+1).toString().padStart(2,'0')+'/'+today.getFullYear();
+  document.getElementById('conf-total').textContent=fmt(tot);
+  document.getElementById('conf-total2').textContent=fmt(tot);
+  document.getElementById('conf-sub').textContent=fmt(tot);
+  const ci=document.getElementById('conf-items');ci.innerHTML='';
+  cart.forEach(item=>{
+    const row=document.createElement('div');
+    row.className='conf-detail-row';
+    row.innerHTML=`<div><a style="color:var(--red)">${item.name} - ${item.selectedSize||''}</a> × 1</div><span style="font-weight:700">${fmt(item.unitPrice||item.price[1])}</span>`;
+    ci.appendChild(row);
+  });
+  cart=[];updateCartUI();go('confirmation');
+}
+
+// ── UI HELPERS ────────────────────────────────────────────────────
+function showTab(el,tabId){
+  document.querySelectorAll('.pd-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.pd-tab-content').forEach(c=>c.style.display='none');
+  const tab=document.getElementById(tabId);if(tab)tab.style.display='block';
+}
+function faq(el){
+  const a=el.nextElementSibling;
+  const open=a.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.faq-q').forEach(x=>x.classList.remove('open'));
+  if(!open){a.classList.add('open');el.classList.add('open');}
+}
+function toggleAcc(el){el.nextElementSibling.classList.toggle('open');}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+let toastTm;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastTm);
+  toastTm=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ── GALLERY CAROUSEL ─────────────────────────────────────────────
+const GAL_IMGS=[
+  ROOT+'Content website/1. Homepage/Cafeteria photo.jpg',
+  ROOT+'Content website/1. Homepage/DSC_0482.JPG',
+  ROOT+'Content website/1. Homepage/DSC_0506 2.jpg',
+  ROOT+'Content website/6.Contact us./DSC_0266.JPG',
+];
+let galIdx=0,galTimer;
+function buildCarousel(){
+  const track=document.getElementById('gal-track');
+  const dots=document.getElementById('gal-dots');
+  if(!track||track.hasChildNodes())return;
+  GAL_IMGS.forEach((src,i)=>{
+    const slide=document.createElement('div');
+    slide.className='carousel-slide';
+    slide.innerHTML=`<img src="${src}" alt="360 Café gallery ${i+1}">`;
+    track.appendChild(slide);
+    const dot=document.createElement('button');
+    dot.className='carousel-dot'+(i===0?' active':'');
+    dot.onclick=()=>galGoTo(i);
+    dots.appendChild(dot);
+  });
+  galAutoPlay();
+}
+function galGoTo(idx){
+  galIdx=(idx+GAL_IMGS.length)%GAL_IMGS.length;
+  document.getElementById('gal-track').style.transform=`translateX(-${galIdx*100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===galIdx));
+}
+function galMove(dir){galGoTo(galIdx+dir);resetAutoPlay();}
+function galAutoPlay(){galTimer=setInterval(()=>galGoTo(galIdx+1),4000);}
+function resetAutoPlay(){clearInterval(galTimer);galAutoPlay();}
+
+// ── BOOT ─────────────────────────────────────────────────────────
+initImages();
+updateCartUI();
+buildCarousel();
+// Apply initial translations for dynamic blocks (sinpe, etc.)
+(()=>{
+  const sinpeBox=document.getElementById('sinpe-box');if(sinpeBox)sinpeBox.innerHTML=t('sinpe_html');
+  const sinpeNote=document.getElementById('sinpe-note');if(sinpeNote)sinpeNote.innerHTML=t('sinpe_note');
+  const privacyTxt=document.getElementById('privacy-txt');if(privacyTxt)privacyTxt.innerHTML=t('privacy');
+})();
+</script>
+</body>
+</html>
