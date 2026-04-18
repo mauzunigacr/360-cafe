@@ -541,7 +541,7 @@ footer{background:var(--red);padding:40px 48px 24px}
 
 <!-- NAV -->
 <nav id="nav">
-  <img class="nav-logo-img" id="nav-logo" src="../Module 05/360 Cafe SEO logo.png" alt="360 Café" onclick="go('home')">
+  <img class="nav-logo-img" id="nav-logo" src="assets/images/logo.png" alt="360 Café" onclick="go('home')">
   <div class="nav-links">
     <a onclick="go('home')" data-page="home" class="active" data-i18n="nav_home">Home</a>
     <a onclick="go('menu')" data-page="menu" data-i18n="nav_menu">Menu</a>
@@ -1065,7 +1065,7 @@ footer{background:var(--red);padding:40px 48px 24px}
   </div>
   <div class="footer-center">
     <div class="footer-logo-wrap">
-      <img class="footer-logo-img" src="../Module 05/360 Cafe SEO logo.png" alt="360 Café" onclick="go('home')" style="cursor:pointer">
+      <img class="footer-logo-img" src="assets/images/logo.png" alt="360 Café" onclick="go('home')" style="cursor:pointer">
       <div class="footer-socials">
         <a><i class="fab fa-facebook-f"></i></a>
         <a><i class="fab fa-instagram"></i></a>
@@ -1322,39 +1322,38 @@ function applyTranslations(){
 }
 
 // ── IMAGE PATHS ────────────────────────────────────────────────────
-const ROOT = '../';
 const I = {
-  hero:   ROOT+'Content website/1. Homepage/DSC_0239.JPG',
-  hero2:  ROOT+'Content website/1. Homepage/DSC_0306.JPG',
-  hero3:  ROOT+'Content website/1. Homepage/DSC_0367.JPG',
-  cafe:   ROOT+'Content website/1. Homepage/Cafeteria photo.jpg',
-  ms1:    ROOT+'Content website/1. Homepage/Menu section/DSC_0437.JPG',
-  ms2:    ROOT+'Content website/1. Homepage/Menu section/DSC_0207.JPG',
-  ms3:    ROOT+'Content website/1. Homepage/Menu section/DSC_0123.JPG',
-  ms4:    ROOT+'Content website/1. Homepage/Menu section/DSC_0208.JPG',
-  ms5:    ROOT+'Content website/1. Homepage/Menu section/DSC_0350.JPG',
-  about:  ROOT+'Content website/5.About us./DSC_0212.JPG',
-  contact:ROOT+'Content website/6.Contact us./DSC_0266.JPG',
-  am:     ROOT+'Module 06/Bebidas/Americano.jpg',
-  aml:    ROOT+'Module 06/Bebidas/Americano-con-leche.jpg',
-  am1:    ROOT+'Module 06/Bebidas/Americano1.jpg',
-  cap:    ROOT+'Module 06/Bebidas/Cappu-americano.jpg',
-  moc:    ROOT+'Module 06/Bebidas/Mocaccino.jpg',
-  crCar:  ROOT+'Module 06/Crepes photos/Caramel-Strawberries-crepe.jpg',
-  crFr:   ROOT+'Module 06/Crepes photos/Frutos-rojos.jpg',
-  crOr:   ROOT+'Module 06/Crepes photos/Galletas-oreo-crepe.jpg',
-  crKi:   ROOT+'Module 06/Crepes photos/Kiwi-Strawberries-crepe.jpg',
-  crBa:   ROOT+'Module 06/Crepes photos/banano-y-almendras.jpg',
-  ff1:    ROOT+'Content website/2. Menu/Fast food/DSC_0103.JPG',
-  ff2:    ROOT+'Content website/2. Menu/Fast food/DSC_0294.JPG',
-  sw1:    ROOT+'Content website/2. Menu/Sandwiches/DSC_0251.JPG',
-  sw2:    ROOT+'Content website/2. Menu/Sandwiches/DSC_0259.JPG',
-  pas:    ROOT+'Content website/2. Menu/Pastelería/DSC_0367.JPG',
-  crDl1:  ROOT+'Content website/2. Menu/Crepas Dulces/DSC_0311.JPG',
-  crDl2:  ROOT+'Content website/2. Menu/Crepas Dulces/DSC_0337.JPG',
-  crDl3:  ROOT+'Content website/2. Menu/Crepas Dulces/DSC_0340.JPG',
-  blog1:  ROOT+'Content website/1. Homepage/DSC_0239.JPG',
-  blog2:  ROOT+'Content website/1. Homepage/DSC_0306.JPG',
+  hero:   'assets/images/homepage/hero.jpg',
+  hero2:  'assets/images/venue/dining-room-1.jpg',
+  hero3:  'assets/images/venue/dining-room-2.jpg',
+  cafe:   'assets/images/venue/cafeteria.jpg',
+  ms1:    'assets/images/homepage/menu-section/ms1.jpg',
+  ms2:    'assets/images/homepage/menu-section/ms2.jpg',
+  ms3:    'assets/images/homepage/menu-section/ms3.jpg',
+  ms4:    'assets/images/homepage/menu-section/ms4.jpg',
+  ms5:    'assets/images/homepage/menu-section/ms5.jpg',
+  about:  'assets/images/about/story.jpg',
+  contact:'assets/images/venue/counter.jpg',
+  am:     'assets/images/drinks/americano.jpg',
+  aml:    'assets/images/drinks/americano-leche.jpg',
+  am1:    'assets/images/drinks/americano2.jpg',
+  cap:    'assets/images/drinks/cappuccino.jpg',
+  moc:    'assets/images/drinks/mocaccino.jpg',
+  crCar:  'assets/images/crepes/caramel-strawberry.jpg',
+  crFr:   'assets/images/crepes/red-fruits.jpg',
+  crOr:   'assets/images/crepes/oreo.jpg',
+  crKi:   'assets/images/crepes/kiwi-strawberry.jpg',
+  crBa:   'assets/images/crepes/banana-almonds.jpg',
+  ff1:    'assets/images/menu/fastfood-1.jpg',
+  ff2:    'assets/images/menu/fastfood-2.jpg',
+  sw1:    'assets/images/menu/sandwich-1.jpg',
+  sw2:    'assets/images/menu/sandwich-2.jpg',
+  pas:    'assets/images/menu/pastry.jpg',
+  crDl1:  'assets/images/menu/crepe-dulce-1.jpg',
+  crDl2:  'assets/images/menu/crepe-dulce-2.jpg',
+  crDl3:  'assets/images/menu/crepe-dulce-3.jpg',
+  blog1:  'assets/images/homepage/hero.jpg',
+  blog2:  'assets/images/venue/dining-room-1.jpg',
 };
 
 // ── MENU DATA (bilingual) ──────────────────────────────────────────
@@ -1770,10 +1769,10 @@ function toast(msg){
 
 // ── GALLERY CAROUSEL ─────────────────────────────────────────────
 const GAL_IMGS=[
-  ROOT+'Content website/1. Homepage/Cafeteria photo.jpg',
-  ROOT+'Content website/1. Homepage/DSC_0482.JPG',
-  ROOT+'Content website/1. Homepage/DSC_0506 2.jpg',
-  ROOT+'Content website/6.Contact us./DSC_0266.JPG',
+  'assets/images/venue/cafeteria.jpg',
+  'assets/images/venue/dining-room-1.jpg',
+  'assets/images/venue/dining-room-2.jpg',
+  'assets/images/venue/counter.jpg',
 ];
 let galIdx=0,galTimer;
 function buildCarousel(){
